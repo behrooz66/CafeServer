@@ -12,10 +12,16 @@ namespace Api.Controllers
     {
         // GET api/values
         [HttpGet]
-        [Authorize]
-        public IEnumerable<string> Get()
+        [Authorize(Roles ="manager")]
+        public ActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            var claims = User.Claims.ToList().Select(c => new
+            {
+                c.Type,
+                c.Value
+            });
+
+            return Ok(claims);
         }
 
         // GET api/values/5

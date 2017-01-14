@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using AuthServer.Repositories;
+using AuthServer.RepositoryInterfaces;
+using AuthServer.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api
 {
@@ -37,6 +41,12 @@ namespace Api
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
+            
+            services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+            );
+            services.AddTransient<IProvinceRepository, ProvinceRepository>();
+                    
             services.AddMvc();
         }
 
@@ -55,6 +65,14 @@ namespace Api
                 ApiName = "api1",
                 RequireHttpsMetadata = false
             });
+
+            app.UseCors(options =>
+            {
+                options.AllowAnyHeader();
+                options.AllowAnyOrigin();
+                options.AllowAnyMethod();
+                options.AllowCredentials();
+            }); 
             app.UseMvc();
         }
     }

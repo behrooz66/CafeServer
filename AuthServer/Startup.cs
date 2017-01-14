@@ -24,6 +24,7 @@ namespace AuthServer
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
 
         public IConfigurationRoot Configuration { get; }
+        public static string ConnectionString { get; private set; }
 
         public Startup(IHostingEnvironment env)
         {
@@ -34,19 +35,20 @@ namespace AuthServer
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+            ConnectionString = Configuration.GetConnectionString("DefaultConnection");
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = Configuration.GetConnectionString("DefaultConnection");
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
             services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer(connectionString)
+                    options.UseSqlServer(ConnectionString)
             );
 
             services.AddTransient<IResourceOwnerPasswordValidator, ResourceOwnerPasswordValidator>()
                     .AddTransient<IProfileService, ProfileService>()
-                    .AddTransient<IAuthRepository, AuthRepository>();
+                    .AddTransient<IAuthRepository, AuthRepository>()
+                    .AddTransient<IProvinceRepository, ProvinceRepository>();
 
             services.AddIdentityServer()
                     .AddTemporarySigningCredential()
@@ -65,7 +67,15 @@ namespace AuthServer
             }
 
             app.UseIdentityServer();
+            app.UseCors(options =>
+            {
+                options.AllowAnyHeader();
+                options.AllowAnyOrigin();
+                options.AllowAnyMethod();
+                options.AllowCredentials();
+            });
 
+            //DbContextExtensions.Seed(app);
             /*app.Run(async (context) =>
             {
                 await context.Response.WriteAsync("Hello World!");

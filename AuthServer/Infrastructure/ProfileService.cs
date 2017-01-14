@@ -27,8 +27,15 @@ namespace AuthServer.Infrastructure
                 var user = this._rep.GetUserById(subjectId);
                 var Claims = new List<Claim>
                 {
-                    new Claim(JwtClaimTypes.Subject, user.Id.ToString())
+                    new Claim(JwtClaimTypes.Subject, user.Id.ToString()),
+                    new Claim(JwtClaimTypes.PreferredUserName, user.Username)
                 };
+                var uc = this._rep.GetClaims(subjectId);
+                foreach(var c in uc)
+                {
+                    Claims.Add(new Claim(c.ClaimType, c.ClaimValue));
+                }
+                
                 context.IssuedClaims = Claims;
                 return Task.FromResult(0);
             }

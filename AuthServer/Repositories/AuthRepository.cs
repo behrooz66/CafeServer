@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using AuthServer.Infrastructure;
@@ -16,6 +17,12 @@ namespace AuthServer.Repositories
         public AuthRepository(ApplicationDbContext context)
         {
             this.db = context;
+        }
+
+        public List<UserClaim> GetClaims(string userId)
+        {
+            var claims = db.UserClaims.Where(u => u.UserId == userId).ToList();
+            return claims;
         }
 
         public User GetUserById(string userId)

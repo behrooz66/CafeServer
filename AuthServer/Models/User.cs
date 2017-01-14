@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,5 +17,10 @@ namespace AuthServer.Models
         public string Password { get; set; }
         public bool Active { get; set; }
         public bool Verified { get; set; }
+
+        public int RestaurantId { get; set; }
+
+        [ForeignKey("RestaurantId")]
+        public virtual Restaurant Restaurant { get; set; }
     }
 }

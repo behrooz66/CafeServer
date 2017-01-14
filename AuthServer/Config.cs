@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using IdentityServer4.Models;
 using IdentityServer4.Test;
+using Microsoft.Extensions.Configuration;
 
 namespace AuthServer
 {
@@ -26,7 +27,11 @@ namespace AuthServer
         {
             return new List<ApiResource>
             {
-                new ApiResource("api", "API 1 display name"),
+                new ApiResource("api", "API 1 display name", 
+                        new List<string>()
+                        {
+                            "role"
+                        })
                // new ApiResource("offline_access", "Kiram dahanesh")
             };
         }
@@ -44,6 +49,10 @@ namespace AuthServer
                     },
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     AccessTokenLifetime = 10,
+                    AllowedCorsOrigins = new List<string>
+                    {
+                        "http://localhost:4200/"
+                    },
                     RefreshTokenExpiration = TokenExpiration.Sliding,
                     UpdateAccessTokenClaimsOnRefresh = true,
                     SlidingRefreshTokenLifetime = 3600,
@@ -52,7 +61,8 @@ namespace AuthServer
                     {
                         "api",
                         //"offline_access"
-                    }
+                    },
+                    Enabled = true,
                 }
             };
         }
