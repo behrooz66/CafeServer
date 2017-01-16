@@ -16,6 +16,7 @@ namespace AuthServer.Infrastructure
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserClaim> UserClaims { get; set; }
         
+        public DbSet<Country> Countries { get; set; }
         public DbSet<Province> Provinces { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Restaurant> Restaurants { get; set; }

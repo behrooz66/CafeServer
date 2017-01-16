@@ -45,8 +45,18 @@ namespace Api
             services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
             );
-            services.AddTransient<IProvinceRepository, ProvinceRepository>();
-                    
+            services.AddTransient<IProvinceRepository, ProvinceRepository>()
+                .AddTransient<ICountryRepository, CountryRepository>()
+                .AddTransient<ICityRepository, CityRepository>()
+                .AddTransient<ICustomerRepository, CustomerRepository>()
+                .AddTransient<IGiftCardRepository, GiftCardRepository>()
+                .AddTransient<IGiftCardTypeRepository, GiftCardTypeRepository>()
+                .AddTransient<IOrderRepository, OrderRepository>()
+                .AddTransient<IOrderTypeRepository, OrderTypeRepository>()
+                .AddTransient<IReservationRepository, ReservationRepository>()
+                .AddTransient<IReservationStatusRepository, ReservationStatusRepository>()
+                .AddTransient<IRestaurantRepository, RestaurantRepository>();
+
             services.AddMvc();
         }
 

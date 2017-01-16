@@ -28,6 +28,7 @@ namespace AuthServer.Repositories
             var c = db.Cities.Where(x => x.Id == id).FirstOrDefault();
             if (c == null) throw new NullReferenceException();
             db.Cities.Remove(c);
+            db.SaveChanges();
             return true;
         }
 

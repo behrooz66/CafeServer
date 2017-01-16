@@ -19,6 +19,7 @@ namespace AuthServer.Repositories
         public int Create(Order order)
         {
             db.Orders.Add(order);
+            db.SaveChanges();
             return order.Id;
         }
 
@@ -27,6 +28,7 @@ namespace AuthServer.Repositories
             var o = db.Orders.Find(id);
             if (o == null) throw new NullReferenceException();
             db.Orders.Remove(o);
+            db.SaveChanges();
             return true;
         }
 

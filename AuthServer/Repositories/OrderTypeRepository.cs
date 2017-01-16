@@ -19,6 +19,7 @@ namespace AuthServer.Repositories
         public int Create(OrderType orderType)
         {
             db.OrderTypes.Add(orderType);
+            db.SaveChanges();
             return orderType.Id;
         }
 
@@ -27,6 +28,7 @@ namespace AuthServer.Repositories
             var ot = db.OrderTypes.Find(id);
             if (ot == null) throw new NullReferenceException();
             db.OrderTypes.Remove(ot);
+            db.SaveChanges();
             return true;
         }
 

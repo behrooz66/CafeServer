@@ -6,7 +6,7 @@ using AuthServer.Models;
 
 namespace AuthServer.RepositoryInterfaces
 {
-    interface ICityRepository
+    public interface ICityRepository
     {
         int Create(City city);
         City Update(int id, City updatedCity);

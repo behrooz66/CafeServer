@@ -181,8 +181,11 @@ C:\projects\GitHub\CafeServer\AuthServer\Migrations\20170114214024_mostEntitiesD
 C:\projects\GitHub\CafeServer\AuthServer\Migrations\20170114214024_mostEntitiesDbSetsAdded.Designer.cs
 C:\projects\GitHub\CafeServer\AuthServer\Migrations\20170114231029_addressFoundFlagAddedToCustomer.cs
 C:\projects\GitHub\CafeServer\AuthServer\Migrations\20170114231029_addressFoundFlagAddedToCustomer.Designer.cs
+C:\projects\GitHub\CafeServer\AuthServer\Migrations\20170115215308_countryAdded.cs
+C:\projects\GitHub\CafeServer\AuthServer\Migrations\20170115215308_countryAdded.Designer.cs
 C:\projects\GitHub\CafeServer\AuthServer\Migrations\ApplicationDbContextModelSnapshot.cs
 C:\projects\GitHub\CafeServer\AuthServer\Models\City.cs
+C:\projects\GitHub\CafeServer\AuthServer\Models\Country.cs
 C:\projects\GitHub\CafeServer\AuthServer\Models\Customer.cs
 C:\projects\GitHub\CafeServer\AuthServer\Models\GiftCard.cs
 C:\projects\GitHub\CafeServer\AuthServer\Models\Order.cs

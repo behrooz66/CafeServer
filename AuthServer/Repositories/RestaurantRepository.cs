@@ -19,6 +19,7 @@ namespace AuthServer.Repositories
         public int Create(Restaurant restaurant)
         {
             db.Restaurants.Add(restaurant);
+            db.SaveChanges();
             return restaurant.Id;
         }
 
@@ -27,6 +28,7 @@ namespace AuthServer.Repositories
             var res = db.Restaurants.Find(id);
             if (res == null) throw new NullReferenceException();
             db.Restaurants.Remove(res);
+            db.SaveChanges();
             return true;
         }
 

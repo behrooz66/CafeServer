@@ -6,12 +6,12 @@ using AuthServer.Models;
 
 namespace AuthServer.RepositoryInterfaces
 {
-    public interface IOrderTypeRepository
+    public interface ICountryRepository
     {
-        int Create(OrderType orderType);
-        OrderType Update(int id, OrderType updated);
+        int Create(Country country);
+        Country Update(int id, Country updatedCountry);
         bool Delete(int id);
-        IEnumerable<OrderType> GetAll();
-        OrderType Get(int id);
+        IEnumerable<Country> GetAll();
+        Country Get(int id);
     }
 }

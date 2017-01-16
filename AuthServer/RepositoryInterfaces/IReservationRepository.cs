@@ -6,7 +6,7 @@ using AuthServer.Models;
 
 namespace AuthServer.RepositoryInterfaces
 {
-    interface IReservationRepository
+    public interface IReservationRepository
     {
         int Create(Reservation reservation);
         Reservation Update(int id, Reservation updated);

@@ -28,6 +28,7 @@ namespace AuthServer.Repositories
             var cus = db.Customers.Find(id);
             if (cus == null) throw new NullReferenceException();
             db.Customers.Remove(cus);
+            db.SaveChanges();
             return true;
         }
 

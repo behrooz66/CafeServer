@@ -6,7 +6,7 @@ using AuthServer.Models;
 
 namespace AuthServer.RepositoryInterfaces
 {
-    interface ICustomerRepository
+    public interface ICustomerRepository
     {
         int Create(Customer customer);
         Customer Update(int id, Customer updated);

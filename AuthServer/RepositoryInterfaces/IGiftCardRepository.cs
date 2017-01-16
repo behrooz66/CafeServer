@@ -6,7 +6,7 @@ using AuthServer.Models;
 
 namespace AuthServer.RepositoryInterfaces
 {
-    interface IGiftCardRepository
+    public interface IGiftCardRepository
     {
         int Create(GiftCard giftCard);
         GiftCard Update(int id, GiftCard updated);

@@ -20,6 +20,7 @@ namespace AuthServer.Repositories
         public int Create(GiftCard giftCard)
         {
             db.GiftCards.Add(giftCard);
+            db.SaveChanges();
             return giftCard.Id;
         }
 
@@ -28,6 +29,7 @@ namespace AuthServer.Repositories
             var gc = db.GiftCards.Find(id);
             if (gc == null) throw new NullReferenceException();
             db.GiftCards.Remove(gc);
+            db.SaveChanges();
             return true;
         }
 

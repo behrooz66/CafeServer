@@ -19,6 +19,7 @@ namespace AuthServer.Repositories
         public int Create(Reservation reservation)
         {
             db.Reservations.Add(reservation);
+            db.SaveChanges();
             return reservation.Id;
         }
 
@@ -27,6 +28,7 @@ namespace AuthServer.Repositories
             var r = db.Reservations.Find(id);
             if (r == null) throw new NullReferenceException();
             db.Reservations.Remove(r);
+            db.SaveChanges();
             return true;
         }
 

@@ -18,6 +18,17 @@ namespace AuthServer.Infrastructure
                 context.Database.EnsureCreated();
 
                 context.AddRange(
+                    new Country
+                    {
+                        Name = "Canada"
+                    },
+                    new Country
+                    {
+                        Name = "United States"
+                    }
+                );
+
+                context.AddRange(
                 new Province { Name = "British Columbia" },
                 new Province { Name = "Alberta" },
                 new Province { Name = "Ontario" });
