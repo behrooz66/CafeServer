@@ -16,6 +16,15 @@ namespace AuthServer.Repositories
             this.db = context;
         }
 
+        public bool Archive(int id)
+        {
+            var customer = db.Customers.Find(id);
+            if (customer == null) throw new NullReferenceException();
+            customer.Deleted = true;
+            db.SaveChanges();
+            return true;
+        }
+
         public int Create(Customer customer)
         {
             db.Customers.Add(customer);
@@ -35,14 +44,18 @@ namespace AuthServer.Repositories
         public Customer Get(int id)
         {
             var cus = db.Customers.Find(id);
+            db.Entry(cus).Reference("City").Load();
+            db.Entry(cus.City).Reference("Province").Load();
+            db.Entry(cus.City.Province).Reference("Country").Load();
             if (cus == null) throw new NullReferenceException();
             return cus;
         }
 
-        public IEnumerable<Customer> GetAll()
+        public IEnumerable<Customer> GetByRestaurant(int restaurantId)
         {
-            var cus = db.Customers.ToList();
-            return cus;
+            var cus = db.Customers.Where(x => x.RestaurantId == restaurantId);
+            var customers = cus.ToList();
+            return customers;
         }
 
         public Customer Update(int id, Customer updated)
@@ -62,7 +75,10 @@ namespace AuthServer.Repositories
             cus.Notes = updated.Notes;
             cus.OtherPhone = updated.OtherPhone;
             cus.PostalCode = updated.PostalCode;
-            cus.ProvinceId = updated.ProvinceId;
+            cus.UpdatedAt = updated.UpdatedAt;
+            cus.UpdatedBy = updated.UpdatedBy;
+            cus.AddressFound = updated.AddressFound;
+            //cus.ProvinceId = updated.ProvinceId;
             //cus.RestaurantId = updated.RestaurantId;
             db.SaveChanges();
             return cus;

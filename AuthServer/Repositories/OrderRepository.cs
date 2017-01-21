@@ -16,6 +16,15 @@ namespace AuthServer.Repositories
             this.db = context;
         }
 
+        public bool Archive(int id)
+        {
+            var o = db.Orders.Find(id);
+            if (o == null) throw new NullReferenceException();
+            o.Deleted = true;
+            db.SaveChanges();
+            return true;
+        }
+
         public int Create(Order order)
         {
             db.Orders.Add(order);
@@ -39,10 +48,24 @@ namespace AuthServer.Repositories
             return o;
         }
 
-        public IEnumerable<Order> GetAll()
+        public IEnumerable<Order> GetByCustomer(int customerId)
         {
-            var o = db.Orders.ToList();
-            return o;
+            var orders = db.Orders
+                         .Where(o => o.CustomerId == customerId)
+                         .Where(o => !o.Deleted)
+                         .ToList();
+            return orders;
+        }
+
+        public IEnumerable<Order> GetByRestaurant(int restaurantId)
+        {
+            List<int> cIds = db.Customers.Where(c => c.RestaurantId == restaurantId)
+                            .Select(x => x.Id).ToList();
+            var orders = db.Orders
+                         .Where(o => cIds.Contains(o.CustomerId))
+                         .Where(o => !o.Deleted)
+                         .ToList();
+            return orders;
         }
 
         public Order Update(int id, Order updated)

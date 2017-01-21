@@ -11,7 +11,9 @@ namespace AuthServer.RepositoryInterfaces
         int Create(GiftCard giftCard);
         GiftCard Update(int id, GiftCard updated);
         bool Delete(int id);
-        IEnumerable<GiftCard> GetAll();
+        bool Archive(int id);
+        IEnumerable<GiftCard> GetByCustomer(int customerId);
+        IEnumerable<GiftCard> GetByRestaurant(int restaurantId);
         GiftCard Get(int id);
     }
 }

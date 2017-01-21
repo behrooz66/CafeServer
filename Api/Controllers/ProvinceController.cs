@@ -18,10 +18,10 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        [Route("get")]
-        public ActionResult Get()
+        [Route("getByCountry")]
+        public ActionResult GetByCountry(int countryId)
         {
-            var p = rep.GetAll();
+            var p = rep.GetByCountry(countryId);
             return Ok(p);
         }
     }

@@ -45,6 +45,12 @@ namespace AuthServer.Repositories
             return p;
         }
 
+        public IEnumerable<Province> GetByCountry(int countryId)
+        {
+            var p = db.Provinces.Where(x => x.CountryId == countryId).ToList();
+            return p;
+        }
+
         public Province Update(int id, Province updatedProvince)
         {
             var p = db.Provinces.Where(pr => pr.Id == id).FirstOrDefault();

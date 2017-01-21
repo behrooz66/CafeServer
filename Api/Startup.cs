@@ -11,6 +11,7 @@ using AuthServer.Repositories;
 using AuthServer.RepositoryInterfaces;
 using AuthServer.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Api.Helpers;
 
 namespace Api
 {
@@ -45,7 +46,8 @@ namespace Api
             services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
             );
-            services.AddTransient<IProvinceRepository, ProvinceRepository>()
+            services.AddTransient<IAuthRepository, AuthRepository>()
+                .AddTransient<IProvinceRepository, ProvinceRepository>()
                 .AddTransient<ICountryRepository, CountryRepository>()
                 .AddTransient<ICityRepository, CityRepository>()
                 .AddTransient<ICustomerRepository, CustomerRepository>()
@@ -55,7 +57,8 @@ namespace Api
                 .AddTransient<IOrderTypeRepository, OrderTypeRepository>()
                 .AddTransient<IReservationRepository, ReservationRepository>()
                 .AddTransient<IReservationStatusRepository, ReservationStatusRepository>()
-                .AddTransient<IRestaurantRepository, RestaurantRepository>();
+                .AddTransient<IRestaurantRepository, RestaurantRepository>()
+                .AddTransient<IHelper, Helper>();
 
             services.AddMvc();
         }

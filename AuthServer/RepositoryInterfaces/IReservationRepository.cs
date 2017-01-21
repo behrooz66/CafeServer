@@ -11,7 +11,9 @@ namespace AuthServer.RepositoryInterfaces
         int Create(Reservation reservation);
         Reservation Update(int id, Reservation updated);
         bool Delete(int id);
-        IEnumerable<Reservation> GetAll();
+        bool Archive(int id);
+        IEnumerable<Reservation> GetByCustomer(int customerId);
+        IEnumerable<Reservation> GetByRestaurant(int restaurantId);
         Reservation Get(int id);
     }
 }

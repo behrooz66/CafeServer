@@ -40,6 +40,6 @@ namespace AuthServer.Models
         public string Status { get; set; }
         public string Notes { get; set; }
 
-        public virtual ICollection<Reservation> Reservations { get; set; }
+        //public virtual ICollection<Reservation> Reservations { get; set; }
     }
 }

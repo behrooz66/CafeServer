@@ -17,6 +17,15 @@ namespace AuthServer.Repositories
             this.db = context;
         }
 
+        public bool Archive(int id)
+        {
+            var g = db.GiftCards.Find(id);
+            if (g == null) throw new NullReferenceException();
+            g.Deleted = true;
+            db.SaveChanges();
+            return true;
+        }
+
         public int Create(GiftCard giftCard)
         {
             db.GiftCards.Add(giftCard);
@@ -40,10 +49,21 @@ namespace AuthServer.Repositories
             return gc;
         }
 
-        public IEnumerable<GiftCard> GetAll()
+        public IEnumerable<GiftCard> GetByCustomer(int customerId)
         {
-            var gc = db.GiftCards.ToList();
-            return gc;
+            var giftcards = db.GiftCards
+                            .Where(g => g.CustomerId == customerId)
+                            .Where(g => !g.Deleted)
+                            .ToList();
+            return giftcards;
+        }
+
+        public IEnumerable<GiftCard> GetByRestaurant(int restaurantId)
+        {
+            List<int> cIds = db.Customers.Where(c => c.RestaurantId == restaurantId).Select(c => c.Id).ToList();
+            var giftcards = db.GiftCards.Where(g => cIds.Contains(g.CustomerId))
+                                        .Where(g => !g.Deleted);
+            return giftcards;
         }
 
         public GiftCard Update(int id, GiftCard updated)

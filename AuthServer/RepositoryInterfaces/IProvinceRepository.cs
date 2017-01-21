@@ -12,6 +12,7 @@ namespace AuthServer.RepositoryInterfaces
         Province Update(int id, Province updatedProvince);
         bool Delete(int id);
         IEnumerable<Province> GetAll();
+        IEnumerable<Province> GetByCountry(int countryId);
         Province Get(int id);
     }
 }

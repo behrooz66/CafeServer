@@ -202,5 +202,12 @@
 -resource:"C:\projects\GitHub\CafeServer\Api\obj\Debug\netcoreapp1.0\Apidotnet-compile.deps.json",Api.deps.json
 "C:\projects\GitHub\CafeServer\Api\Program.cs"
 "C:\projects\GitHub\CafeServer\Api\Startup.cs"
+"C:\projects\GitHub\CafeServer\Api\Controllers\CityController.cs"
+"C:\projects\GitHub\CafeServer\Api\Controllers\CountryController.cs"
+"C:\projects\GitHub\CafeServer\Api\Controllers\CustomerController.cs"
+"C:\projects\GitHub\CafeServer\Api\Controllers\OrderController.cs"
 "C:\projects\GitHub\CafeServer\Api\Controllers\ProvinceController.cs"
+"C:\projects\GitHub\CafeServer\Api\Controllers\RestaurantController.cs"
 "C:\projects\GitHub\CafeServer\Api\Controllers\ValuesController.cs"
+"C:\projects\GitHub\CafeServer\Api\Helpers\Helper.cs"
+"C:\projects\GitHub\CafeServer\Api\Helpers\IHelper.cs"

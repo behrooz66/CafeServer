@@ -22,6 +22,7 @@ namespace AuthServer.Models
         [DefaultValue(false)]
         public bool NoAddress { get; set; }
         // this is for marking whether the address was physically locatable on the map
+        [DefaultValue(false)]
         public bool AddressFound { get; set; }
         public string Address { get; set; }
         public string PostalCode { get; set; }
@@ -34,21 +35,24 @@ namespace AuthServer.Models
         public string UpdatedBy { get; set; }
         public bool Deleted { get; set; }
 
-
+        [Required]
+        [Range(1, Int64.MaxValue, ErrorMessage ="City is not specificed.")]
         public int CityId { get; set; }
         [ForeignKey("CityId")]
         public virtual City City { get; set; }
 
-        public int ProvinceId { get; set; }
+        /*public int ProvinceId { get; set; }
         [ForeignKey("ProvinceId")]
-        public virtual Province Province { get; set; }
-
+        public virtual Province Province { get; set; }*/
+        [Required]
+        [Range(1, Int64.MaxValue, ErrorMessage ="Restaurant is not specified.")]
         public int RestaurantId { get; set; }
         [ForeignKey("RestaurantId")]
         public virtual Restaurant Restaurant { get; set; }
 
+        /*
         public ICollection<Order> Orders { get; set; }
         public ICollection<GiftCard> GiftCards { get; set; }
-        public ICollection<Reservation> Reservations { get; set; }
+        pulic ICollection<Reservation> Reservations { get; set; }*/
     }
 }

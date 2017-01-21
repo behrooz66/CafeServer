@@ -183,6 +183,8 @@ C:\projects\GitHub\CafeServer\AuthServer\Migrations\20170114231029_addressFoundF
 C:\projects\GitHub\CafeServer\AuthServer\Migrations\20170114231029_addressFoundFlagAddedToCustomer.Designer.cs
 C:\projects\GitHub\CafeServer\AuthServer\Migrations\20170115215308_countryAdded.cs
 C:\projects\GitHub\CafeServer\AuthServer\Migrations\20170115215308_countryAdded.Designer.cs
+C:\projects\GitHub\CafeServer\AuthServer\Migrations\20170118183112_customerProvinceRemoved.cs
+C:\projects\GitHub\CafeServer\AuthServer\Migrations\20170118183112_customerProvinceRemoved.Designer.cs
 C:\projects\GitHub\CafeServer\AuthServer\Migrations\ApplicationDbContextModelSnapshot.cs
 C:\projects\GitHub\CafeServer\AuthServer\Models\City.cs
 C:\projects\GitHub\CafeServer\AuthServer\Models\Country.cs
@@ -197,6 +199,7 @@ C:\projects\GitHub\CafeServer\AuthServer\Models\User.cs
 C:\projects\GitHub\CafeServer\AuthServer\Models\UserClaims.cs
 C:\projects\GitHub\CafeServer\AuthServer\Repositories\AuthRepository.cs
 C:\projects\GitHub\CafeServer\AuthServer\Repositories\CityRepository.cs
+C:\projects\GitHub\CafeServer\AuthServer\Repositories\CountryRepository.cs
 C:\projects\GitHub\CafeServer\AuthServer\Repositories\CustomerRepository.cs
 C:\projects\GitHub\CafeServer\AuthServer\Repositories\GiftCardRepository.cs
 C:\projects\GitHub\CafeServer\AuthServer\Repositories\GiftCardTypeRepository.cs
@@ -208,6 +211,7 @@ C:\projects\GitHub\CafeServer\AuthServer\Repositories\ReservationStatusRepositor
 C:\projects\GitHub\CafeServer\AuthServer\Repositories\RestaurantRepository.cs
 C:\projects\GitHub\CafeServer\AuthServer\RepositoryInterfaces\IAuthRepository.cs
 C:\projects\GitHub\CafeServer\AuthServer\RepositoryInterfaces\ICityRepository.cs
+C:\projects\GitHub\CafeServer\AuthServer\RepositoryInterfaces\ICountryRepository.cs
 C:\projects\GitHub\CafeServer\AuthServer\RepositoryInterfaces\ICustomerRepository.cs
 C:\projects\GitHub\CafeServer\AuthServer\RepositoryInterfaces\IGiftCardRepository.cs
 C:\projects\GitHub\CafeServer\AuthServer\RepositoryInterfaces\IGiftCardTypeRepository.cs

@@ -21,8 +21,8 @@ namespace AuthServer.Models
         
         [ForeignKey("CityId")]
         public virtual City City { get; set; }
-        public ICollection<Customer> Customers { get; set; }
-        public ICollection<User> Users { get; set; }
+        //public ICollection<Customer> Customers { get; set; }
+        //public ICollection<User> Users { get; set; }
         
     }
 }

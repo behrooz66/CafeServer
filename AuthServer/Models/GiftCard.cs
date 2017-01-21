@@ -39,6 +39,6 @@ namespace AuthServer.Models
         public string Type { get; set; }
         public string Notes { get; set; }
 
-        public virtual ICollection<GiftCardType> GiftCards { get; set; }
+        //public virtual ICollection<GiftCardType> GiftCards { get; set; }
     }
 }

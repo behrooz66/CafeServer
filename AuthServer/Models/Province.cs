@@ -18,6 +18,6 @@ namespace AuthServer.Models
         [ForeignKey("CountryId")]
         public virtual Country Country { get; set; }
 
-        public virtual ICollection<City> Cities { get; set; }
+        //public virtual ICollection<City> Cities { get; set; }
     }
 }
