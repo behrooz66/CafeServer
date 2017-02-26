@@ -25,10 +25,18 @@ namespace AuthServer.Infrastructure
             {
                 var subjectId = context.Subject.GetSubjectId();
                 var user = this._rep.GetUserById(subjectId);
+                var locIds = this._rep.GetDefaultLocationIds(subjectId);
+                var locNames = this._rep.GetDefaultLocationNames(subjectId);
                 var Claims = new List<Claim>
                 {
                     new Claim(JwtClaimTypes.Subject, user.Id.ToString()),
-                    new Claim(JwtClaimTypes.PreferredUserName, user.Username)
+                    new Claim(JwtClaimTypes.PreferredUserName, user.Username),
+                    new Claim("cityId", locIds[0].ToString()),
+                    //new Claim("provinceId", locIds[1].ToString()),
+                    //new Claim("countryId", locIds[2].ToString()),
+                    new Claim("city", locNames[0].ToString()),
+                    new Claim("province", locNames[1].ToString()),
+                    new Claim("restaurantId", locIds[3].ToString())
                 };
                 var uc = this._rep.GetClaims(subjectId);
                 foreach(var c in uc)

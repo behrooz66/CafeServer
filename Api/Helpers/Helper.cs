@@ -35,15 +35,34 @@ namespace Api.Helpers
         // todo: uncomment the real line!
         public string GetUserId(ClaimsPrincipal user)
         {
-            //var uid = user.Identities.FirstOrDefault().Claims.Where(c => c.Type == "preferred_username").FirstOrDefault().Value;
-            var uid = "behrooz!";
+            //var uid = user.Identities.FirstOrDefault().Claims.Where(c => c.Type == "sub").FirstOrDefault().Value;
+            var uid = "0000-!";
             return uid;
+        }
+
+        public string GetUsername(ClaimsPrincipal user)
+        {
+            // todo: uncomment the real line!
+            // var uname = user.Identities.FirstOrDefault().Claims.Where(c => c.Type == "preferred_username").FirstOrDefault().Value;
+            var uname = "behrooz!";
+            return uname;
         }
 
         public bool OwnesCustomer(ClaimsPrincipal user, int customerId, 
                                     ICustomerRepository _customers, IAuthRepository _auth)
         {
             if (_customers.Get(customerId).RestaurantId == this.GetUserEntity(user, _auth).RestaurantId)
+                return true;
+            return false;
+        }
+
+        public bool OwnesGiftCard(ClaimsPrincipal user, int giftCardId, 
+                                  IGiftCardRepository _giftCards, ICustomerRepository _customers,
+                                  IAuthRepository _auth)
+        {
+            var customerId = _giftCards.Get(giftCardId).CustomerId;
+            var restaurantId = _customers.Get(customerId).RestaurantId;
+            if (this.GetUserEntity(user, _auth).RestaurantId == restaurantId)
                 return true;
             return false;
         }
@@ -55,6 +74,15 @@ namespace Api.Helpers
             var customerId = repOrder.Get(orderId).CustomerId;
             var restaurantId = repCustomer.Get(customerId).RestaurantId;
             if (this.GetUserEntity(user, auth).RestaurantId == restaurantId)
+                return true;
+            return false;
+        }
+
+        public bool OwnesReservation(ClaimsPrincipal user, int reservationsId, IReservationRepository _reservations, ICustomerRepository _customers, IAuthRepository _auth)
+        {
+            var customerId = _reservations.Get(reservationsId).CustomerId;
+            var restaurantId = _customers.Get(customerId).RestaurantId;
+            if (this.GetUserEntity(user, _auth).RestaurantId == restaurantId)
                 return true;
             return false;
         }

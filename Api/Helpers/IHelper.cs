@@ -16,6 +16,9 @@ namespace Api.Helpers
 
         // gets the user Id without querying the database, straight from the bearer token.
         string GetUserId(ClaimsPrincipal user);
+
+        // gets the username straight from the bearer token
+        string GetUsername(ClaimsPrincipal user);
         
         // Gets the errors in the modelstate object in a controller and returns a clean friendly list of errors
         List<KeyValuePair<string, string>> GetErrorsList(List<KeyValuePair<string, ModelStateEntry>> errors);
@@ -25,5 +28,11 @@ namespace Api.Helpers
         
         // checks if the order belongs to a restaurant
         bool OwnesOrder(ClaimsPrincipal user, int orderId, IOrderRepository orderRep, ICustomerRepository customerRep, IAuthRepository auth);
+
+        // checks if the giftcard belongs to a restaurant
+        bool OwnesGiftCard(ClaimsPrincipal user, int giftCardId, IGiftCardRepository _giftCards, ICustomerRepository _customers, IAuthRepository _auth);
+
+        // checks if the reservation belongs to a restaurant
+        bool OwnesReservation(ClaimsPrincipal user, int reservationsId, IReservationRepository _reservations, ICustomerRepository _customers, IAuthRepository _auth);
     }
 }

@@ -74,8 +74,9 @@ namespace Api
             app.UseApplicationInsightsExceptionTelemetry();
             app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
             {
-                Authority = "http://localhost:5000",
-                ApiName = "api1",
+                //Authority = "http://localhost:5000",
+                Authority = Configuration.GetSection("BD").GetSection("Authority").Value,
+                ApiName = "api",
                 RequireHttpsMetadata = false
             });
 

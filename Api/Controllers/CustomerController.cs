@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using AuthServer.Models;
 using System.Security.Claims;
 using Api.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Api.Controllers
 {
@@ -25,6 +26,7 @@ namespace Api.Controllers
             this._rep = rep;
         }
 
+        [Authorize]
         [HttpGet]
         [Route("get/{id}")]
         public ActionResult Get(int id)
@@ -53,15 +55,17 @@ namespace Api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("post")]
         public ActionResult Post([FromBody] Customer customer)
         {
+            
             if (!ModelState.IsValid)
                 return BadRequest(this._helper.GetErrorsList(ModelState.ToList()));
 
-            customer.UpdatedAt = DateTime.Now;
-            customer.UpdatedBy = this._helper.GetUserId(User);
             customer.RestaurantId = this._helper.GetUserEntity(User, this._auth).RestaurantId;
+            customer.UpdatedAt = DateTime.Now;
+            customer.UpdatedBy = this._helper.GetUsername(User);
             this._rep.Create(customer);
             return Ok(customer.Id);
         }
@@ -78,7 +82,7 @@ namespace Api.Controllers
                 return Forbid(new string[] { "kir!" });
 
             customer.UpdatedAt = DateTime.Now;
-            customer.UpdatedBy = this._helper.GetUserId(User);
+            customer.UpdatedBy = this._helper.GetUsername(User);
             var c = this._rep.Update(id, customer);
             return Ok(c);
         }
@@ -102,7 +106,5 @@ namespace Api.Controllers
                 return NotFound("Record not found.");
             }
         }
-
-
     }
 }

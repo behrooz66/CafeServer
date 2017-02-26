@@ -13,5 +13,7 @@ namespace AuthServer.RepositoryInterfaces
         User GetUserByUsername(string username);
         bool ValidatePassword(string username, string password);
         List<UserClaim> GetClaims(string userId);
+        int[] GetDefaultLocationIds(string userId);
+        string[] GetDefaultLocationNames(string userId);
     }
 }

@@ -16,15 +16,19 @@ namespace Api.Controllers
         private IAuthRepository _auth;
         private IHelper _helper;
         private ICustomerRepository _customers;
+        private IOrderTypeRepository _orderTypes;
+
         public OrderController(IOrderRepository rep, 
                                IAuthRepository auth,
                                IHelper helper,
-                               ICustomerRepository customerRep)
+                               ICustomerRepository customerRep,
+                               IOrderTypeRepository orderTypes)
         {
             this._helper = helper;
             this._auth = auth;
             this._rep = rep;
             this._customers = customerRep;
+            this._orderTypes = orderTypes;
         }
 
         [HttpGet]
@@ -73,7 +77,7 @@ namespace Api.Controllers
             if (!this._helper.OwnesCustomer(User, order.CustomerId, this._customers, this._auth))
                 return Forbid();
             order.UpdatedAt = DateTime.Now;
-            order.UpdatedBy = this._helper.GetUserId(User);
+            order.UpdatedBy = this._helper.GetUsername(User);
             this._rep.Create(order);
             return Ok(order.Id);
         }
@@ -91,6 +95,8 @@ namespace Api.Controllers
             if (!this._helper.OwnesOrder(User, id, this._rep, this._customers, this._auth))
                 return Forbid();
 
+            order.UpdatedAt = DateTime.Now;
+            order.UpdatedBy = this._helper.GetUsername(User);
             Order o = this._rep.Update(id, order);
             return Ok(o);
         }
@@ -105,9 +111,13 @@ namespace Api.Controllers
             return Ok(id + " archived.");
         }
 
-
-
-
+        [HttpGet]
+        [Route("types")]
+        public ActionResult GetTypes()
+        {
+            var types = this._orderTypes.GetAll();
+            return Ok(types);
+        }
 
     }
 }

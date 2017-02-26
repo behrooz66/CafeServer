@@ -209,8 +209,10 @@ C:\projects\GitHub\CafeServer\Api\Startup.cs
 C:\projects\GitHub\CafeServer\Api\Controllers\CityController.cs
 C:\projects\GitHub\CafeServer\Api\Controllers\CountryController.cs
 C:\projects\GitHub\CafeServer\Api\Controllers\CustomerController.cs
+C:\projects\GitHub\CafeServer\Api\Controllers\GiftCardController.cs
 C:\projects\GitHub\CafeServer\Api\Controllers\OrderController.cs
 C:\projects\GitHub\CafeServer\Api\Controllers\ProvinceController.cs
+C:\projects\GitHub\CafeServer\Api\Controllers\ReservationController.cs
 C:\projects\GitHub\CafeServer\Api\Controllers\RestaurantController.cs
 C:\projects\GitHub\CafeServer\Api\Controllers\ValuesController.cs
 C:\projects\GitHub\CafeServer\Api\Helpers\Helper.cs
