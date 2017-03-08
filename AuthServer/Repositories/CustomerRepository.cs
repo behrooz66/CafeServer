@@ -73,6 +73,7 @@ namespace AuthServer.Repositories
             cus.Name = updated.Name;
             cus.NoAddress = updated.NoAddress;
             cus.Notes = updated.Notes;
+            cus.Work = updated.Work;
             cus.OtherPhone = updated.OtherPhone;
             cus.PostalCode = updated.PostalCode;
             cus.UpdatedAt = updated.UpdatedAt;

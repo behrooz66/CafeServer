@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Api.Helpers;
 using AuthServer.Models;
 using AuthServer.RepositoryInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -33,6 +34,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("get/{id}")]
+        [Authorize]
         public ActionResult Get(int id)
         {
             try
@@ -50,6 +52,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("getByCustomer")]
+        [Authorize]
         public ActionResult GetByCustomer(int customerId)
         {
             if (!this._helper.OwnesCustomer(User, customerId, this._customers, this._auth))
@@ -60,6 +63,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("getByRestaurant")]
+        [Authorize]
         public ActionResult GetByRestaurant()
         {
             int restaurantId = this._helper.GetUserEntity(User, this._auth).RestaurantId;
@@ -69,6 +73,7 @@ namespace Api.Controllers
 
         [HttpPost]
         [Route("post")]
+        [Authorize]
         public ActionResult Post([FromBody] Order order)
         {
             if (!ModelState.IsValid)
@@ -84,6 +89,7 @@ namespace Api.Controllers
 
         [HttpPut]
         [Route("put/{id}")]
+        [Authorize]
         public ActionResult Put(int id, [FromBody] Order order )
         {
             if (id != order.Id)
@@ -103,6 +109,7 @@ namespace Api.Controllers
 
         [HttpPut]
         [Route("archive/{id}")]
+        [Authorize]
         public ActionResult Archive(int id)
         {
             if (!this._helper.OwnesOrder(User, id, this._rep, this._customers, this._auth))

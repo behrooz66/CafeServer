@@ -26,9 +26,10 @@ namespace Api.Controllers
             this._rep = rep;
         }
 
-        [Authorize]
+        
         [HttpGet]
         [Route("get/{id}")]
+        [Authorize]
         public ActionResult Get(int id)
         {
             try
@@ -47,6 +48,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("get")]
+        [Authorize]
         public ActionResult GetByRestaurant()
         {
             var id = this._helper.GetUserEntity(User, this._auth).RestaurantId;
@@ -72,6 +74,7 @@ namespace Api.Controllers
 
         [HttpPut]
         [Route("put/{id}")]
+        [Authorize]
         public ActionResult Put(int id, [FromBody] Customer customer)
         {
             if (!ModelState.IsValid)
@@ -89,6 +92,7 @@ namespace Api.Controllers
 
         [HttpDelete]
         [Route("delete/{id}")]
+        [Authorize]
         public ActionResult Delete(int id)
         {
             try

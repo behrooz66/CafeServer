@@ -6,13 +6,8 @@ by editing this MSBuild file. In order to learn more about this please visit htt
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>ftp://waws-prod-sn1-081.ftp.azurewebsites.windows.net/site/wwwroot/Api/</_PublishTargetUrl>
+    <_PublishTargetUrl>C:\projects\VS_Publish</_PublishTargetUrl>
   </PropertyGroup>
-  <ItemGroup>
-    <DestinationConnectionStrings Include="DefaultConnection">
-      <Value>Server=tcp:b66test.database.windows.net,1433;Initial Catalog=CafeServer;Persist Security Info=False;User ID=behrooz66;Password=Ferdosi0#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;</Value>
-    </DestinationConnectionStrings>
-  </ItemGroup>
   <ItemGroup>
     <File Include="Api.deps.json">
       <publishTime>02/15/2017 19:56:30</publishTime>
