@@ -1,0 +1,11 @@
+C:\projects\CafeServer\Api\bin\Debug\netcoreapp1.0\Api.deps.json
+C:\projects\CafeServer\Api\bin\Debug\netcoreapp1.0\Api.runtimeconfig.json
+C:\projects\CafeServer\Api\bin\Debug\netcoreapp1.0\Api.runtimeconfig.dev.json
+C:\projects\CafeServer\Api\bin\Debug\netcoreapp1.0\Api.dll
+C:\projects\CafeServer\Api\bin\Debug\netcoreapp1.0\Api.pdb
+C:\projects\CafeServer\Api\bin\Debug\netcoreapp1.0\AuthServer.dll
+C:\projects\CafeServer\Api\bin\Debug\netcoreapp1.0\AuthServer.pdb
+C:\projects\CafeServer\Api\obj\Debug\netcoreapp1.0\Api.csprojResolveAssemblyReference.cache
+C:\projects\CafeServer\Api\obj\Debug\netcoreapp1.0\Api.AssemblyInfo.cs
+C:\projects\CafeServer\Api\obj\Debug\netcoreapp1.0\Api.dll
+C:\projects\CafeServer\Api\obj\Debug\netcoreapp1.0\Api.pdb

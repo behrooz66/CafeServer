@@ -6,6 +6,7 @@ using Api.Helpers;
 using AuthServer.Models;
 using AuthServer.RepositoryInterfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Api.Controllers
 {
@@ -32,6 +33,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("get/{id}")]
+        [Authorize]
         public ActionResult Get(int id)
         {
             try
@@ -49,6 +51,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("getByCustomer")]
+        [Authorize]
         public ActionResult GetByCustomer(int customerId)
         {
             if (!this._helper.OwnesCustomer(User, customerId, _customers, _auth))
@@ -59,6 +62,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("getByRestaurant")]
+        [Authorize]
         public ActionResult GetByRestaurant()
         {
             int restaurantId = this._helper.GetUserEntity(User, _auth).RestaurantId;
@@ -68,6 +72,7 @@ namespace Api.Controllers
 
         [HttpPost]
         [Route("post")]
+        [Authorize]
         public ActionResult Post([FromBody] GiftCard giftcard)
         {
             if (!ModelState.IsValid)
@@ -82,6 +87,7 @@ namespace Api.Controllers
 
         [HttpPut]
         [Route("put/{id}")]
+        [Authorize]
         public ActionResult Put(int id, [FromBody] GiftCard giftcard)
         {
             if (id != giftcard.Id)
@@ -99,6 +105,7 @@ namespace Api.Controllers
 
         [HttpPut]
         [Route("archive/{id}")]
+        [Authorize]
         public ActionResult Archive(int id)
         {
             if (!this._helper.OwnesGiftCard(User, id, this._giftcards, this._customers, this._auth))
@@ -109,6 +116,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("types")]
+        [Authorize]
         public ActionResult GetTypes()
         {
             var types = this._giftCardTypes.GetAll();

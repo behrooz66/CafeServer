@@ -6,6 +6,7 @@ using Api.Helpers;
 using AuthServer.Models;
 using AuthServer.RepositoryInterfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Api.Controllers
 {
@@ -32,6 +33,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("get/{id}")]
+        [Authorize]
         public ActionResult Get(int id)
         {
             try
@@ -49,6 +51,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("getByCustomer")]
+        [Authorize]
         public ActionResult GetByCustomer(int customerId)
         {
             if (!this._helper.OwnesCustomer(User, customerId, _customers, _auth))
@@ -59,6 +62,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("getByRestaurant")]
+        [Authorize]
         public ActionResult GetByRestaurant()
         {
             int restaurantId = this._helper.GetUserEntity(User, _auth).RestaurantId;
@@ -68,6 +72,7 @@ namespace Api.Controllers
 
         [HttpPost]
         [Route("post")]
+        [Authorize]
         public ActionResult Post([FromBody] Reservation reservation)
         {
             if (!ModelState.IsValid)
@@ -82,6 +87,7 @@ namespace Api.Controllers
 
         [HttpPut]
         [Route("put/{id}")]
+        [Authorize]
         public ActionResult Put(int id, [FromBody] Reservation reservation)
         {
             if (id != reservation.Id)
@@ -93,12 +99,16 @@ namespace Api.Controllers
             if (!this._helper.OwnesReservation(User, id, this._reservations, this._customers, this._auth))
                 return Forbid();
 
+            reservation.UpdatedAt = DateTime.Now;
+            reservation.UpdatedBy = this._helper.GetUsername(User);
+
             Reservation r = this._reservations.Update(id, reservation);
             return Ok(r);
         }
 
         [HttpPut]
         [Route("archive/{id}")]
+        [Authorize]
         public ActionResult Archive(int id)
         {
             if (!this._helper.OwnesReservation(User, id, this._reservations, this._customers, this._auth))
@@ -109,6 +119,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("statuses")]
+        [Authorize]
         public ActionResult GetStatuses()
         {
             var statuses = this._statuses.GetAll();
