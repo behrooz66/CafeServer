@@ -28,6 +28,12 @@ namespace AuthServer.Infrastructure
         public DbSet<GiftCard> GiftCards { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
 
+        public DbSet<CustomerHistory> CustomerHistories { get; set; }
+        public DbSet<OrderHistory> OrderHistories { get; set; }
+        public DbSet<ReservationHistory> ReservationHistories { get; set; }
+        public DbSet<GiftCardHistory> GiftCardHistories { get; set; }
+
+
 
     }
 }

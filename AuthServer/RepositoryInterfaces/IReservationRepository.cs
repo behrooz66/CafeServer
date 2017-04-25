@@ -14,6 +14,8 @@ namespace AuthServer.RepositoryInterfaces
         bool Archive(int id);
         IEnumerable<Reservation> GetByCustomer(int customerId);
         IEnumerable<Reservation> GetByRestaurant(int restaurantId);
+
+        IEnumerable<ReservationHistory> GetHistory(int id);
         Reservation Get(int id);
     }
 }

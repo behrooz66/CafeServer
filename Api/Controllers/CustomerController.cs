@@ -110,5 +110,16 @@ namespace Api.Controllers
                 return NotFound("Record not found.");
             }
         }
+
+        [HttpGet]
+        [Route("history/{id}")]
+        [Authorize]
+        public ActionResult History(int id)
+        {
+            if (!this._helper.OwnesCustomer(User, id, this._rep, this._auth))
+                return Forbid();
+            var histories = this._rep.GetHistory(id);
+            return Ok(histories);
+        }
     }
 }

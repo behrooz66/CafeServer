@@ -8,9 +8,10 @@ using AuthServer.Infrastructure;
 namespace AuthServer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170425162950_orderHistory_added")]
+    partial class orderHistory_added
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
@@ -114,56 +115,6 @@ namespace AuthServer.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("AuthServer.Models.CustomerHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Address");
-
-                    b.Property<bool>("AddressFound");
-
-                    b.Property<string>("Cell");
-
-                    b.Property<string>("City");
-
-                    b.Property<int>("CustomerId");
-
-                    b.Property<bool>("Deleted");
-
-                    b.Property<string>("Email");
-
-                    b.Property<string>("Home");
-
-                    b.Property<double?>("Lat");
-
-                    b.Property<double?>("Lon");
-
-                    b.Property<string>("Name");
-
-                    b.Property<bool>("NoAddress");
-
-                    b.Property<string>("Notes");
-
-                    b.Property<string>("OtherPhone");
-
-                    b.Property<string>("PostalCode");
-
-                    b.Property<string>("Restaurant");
-
-                    b.Property<DateTime>("UpdatedAt");
-
-                    b.Property<string>("UpdatedBy");
-
-                    b.Property<string>("Work");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.ToTable("CustomerHistories");
-                });
-
             modelBuilder.Entity("AuthServer.Models.GiftCard", b =>
                 {
                     b.Property<int>("Id")
@@ -196,38 +147,6 @@ namespace AuthServer.Migrations
                     b.HasIndex("GiftCardTypeId");
 
                     b.ToTable("GiftCards");
-                });
-
-            modelBuilder.Entity("AuthServer.Models.GiftCardHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<decimal>("Amount");
-
-                    b.Property<bool>("Deleted");
-
-                    b.Property<DateTime>("ExpiryDate");
-
-                    b.Property<int>("GiftCardId");
-
-                    b.Property<string>("GiftCardType");
-
-                    b.Property<DateTime>("IssueDate");
-
-                    b.Property<string>("Notes");
-
-                    b.Property<string>("Number");
-
-                    b.Property<DateTime>("UpdatedAt");
-
-                    b.Property<string>("UpdatedBy");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GiftCardId");
-
-                    b.ToTable("GiftCardHistories");
                 });
 
             modelBuilder.Entity("AuthServer.Models.GiftCardType", b =>
@@ -278,6 +197,8 @@ namespace AuthServer.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<int>("CustomerId");
 
                     b.Property<DateTime>("Date");
 
@@ -367,40 +288,6 @@ namespace AuthServer.Migrations
                     b.HasIndex("ReservationStatusId");
 
                     b.ToTable("Reservations");
-                });
-
-            modelBuilder.Entity("AuthServer.Models.ReservationHistory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("Date");
-
-                    b.Property<bool>("Deleted");
-
-                    b.Property<string>("Notes");
-
-                    b.Property<int>("NumberOfPeople");
-
-                    b.Property<int>("ReservationId");
-
-                    b.Property<string>("ReservationStatus");
-
-                    b.Property<decimal?>("Revenue");
-
-                    b.Property<string>("Table");
-
-                    b.Property<string>("Time");
-
-                    b.Property<DateTime>("UpdatedAt");
-
-                    b.Property<string>("UpdatedBy");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReservationId");
-
-                    b.ToTable("ReservationHistories");
                 });
 
             modelBuilder.Entity("AuthServer.Models.ReservationStatus", b =>
@@ -520,14 +407,6 @@ namespace AuthServer.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("AuthServer.Models.CustomerHistory", b =>
-                {
-                    b.HasOne("AuthServer.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("AuthServer.Models.GiftCard", b =>
                 {
                     b.HasOne("AuthServer.Models.Customer", "Customer")
@@ -538,14 +417,6 @@ namespace AuthServer.Migrations
                     b.HasOne("AuthServer.Models.GiftCardType", "GiftCardType")
                         .WithMany()
                         .HasForeignKey("GiftCardTypeId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("AuthServer.Models.GiftCardHistory", b =>
-                {
-                    b.HasOne("AuthServer.Models.GiftCard", "GiftCard")
-                        .WithMany()
-                        .HasForeignKey("GiftCardId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -588,14 +459,6 @@ namespace AuthServer.Migrations
                     b.HasOne("AuthServer.Models.ReservationStatus", "ReservationStatus")
                         .WithMany()
                         .HasForeignKey("ReservationStatusId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("AuthServer.Models.ReservationHistory", b =>
-                {
-                    b.HasOne("AuthServer.Models.Reservation", "Reservation")
-                        .WithMany()
-                        .HasForeignKey("ReservationId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

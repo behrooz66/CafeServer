@@ -15,6 +15,9 @@ namespace AuthServer.RepositoryInterfaces
         //IEnumerable<Order> GetAll();
         IEnumerable<Order> GetByCustomer(int customerId);
         IEnumerable<Order> GetByRestaurant(int restaurantId);
+
+        IEnumerable<OrderHistory> GetHistory(int id);
+
         Order Get(int id);
     }
 }

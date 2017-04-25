@@ -14,6 +14,8 @@ namespace AuthServer.RepositoryInterfaces
         bool Archive(int id);
         IEnumerable<GiftCard> GetByCustomer(int customerId);
         IEnumerable<GiftCard> GetByRestaurant(int restaurantId);
+
+        IEnumerable<GiftCardHistory> GetHistory(int id);
         GiftCard Get(int id);
     }
 }

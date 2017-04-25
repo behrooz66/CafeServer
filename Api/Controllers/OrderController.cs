@@ -119,6 +119,17 @@ namespace Api.Controllers
         }
 
         [HttpGet]
+        [Route("history/{id}")]
+        [Authorize(Roles ="Manager")]
+        public ActionResult History(int id)
+        {
+            if (!this._helper.OwnesOrder(User, id, this._rep, this._customers, this._auth))
+                return Forbid();
+            var histories = this._rep.GetHistory(id);
+            return Ok(histories);
+        }
+
+        [HttpGet]
         [Route("types")]
         public ActionResult GetTypes()
         {

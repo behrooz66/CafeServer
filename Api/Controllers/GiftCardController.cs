@@ -115,6 +115,17 @@ namespace Api.Controllers
         }
 
         [HttpGet]
+        [Route("history/{id}")]
+        [Authorize(Roles = "Manager")]
+        public ActionResult History(int id)
+        {
+            if (!this._helper.OwnesGiftCard(User, id, this._giftcards, this._customers, this._auth))
+                return Forbid();
+            var histories = this._giftcards.GetHistory(id);
+            return Ok(histories);
+        }
+
+        [HttpGet]
         [Route("types")]
         [Authorize]
         public ActionResult GetTypes()

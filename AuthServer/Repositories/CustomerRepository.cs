@@ -20,6 +20,10 @@ namespace AuthServer.Repositories
         {
             var customer = db.Customers.Find(id);
             if (customer == null) throw new NullReferenceException();
+
+            // log history
+            LogHistory(customer);
+
             customer.Deleted = true;
             db.SaveChanges();
             return true;
@@ -36,6 +40,10 @@ namespace AuthServer.Repositories
         {
             var cus = db.Customers.Find(id);
             if (cus == null) throw new NullReferenceException();
+
+            //Clear history
+            ClearHistory(cus);
+
             db.Customers.Remove(cus);
             db.SaveChanges();
             return true;
@@ -62,6 +70,11 @@ namespace AuthServer.Repositories
         {
             var cus = db.Customers.Find(id);
             if (cus == null) throw new NullReferenceException();
+
+            // log history
+            LogHistory(cus);
+
+
             cus.Address = updated.Address;
             cus.Cell = updated.Cell;
             cus.CityId = updated.CityId;
@@ -83,6 +96,49 @@ namespace AuthServer.Repositories
             //cus.RestaurantId = updated.RestaurantId;
             db.SaveChanges();
             return cus;
+        }
+
+
+        //*** DEALING WITH HISTORY
+        public IEnumerable<CustomerHistory> GetHistory(int id)
+        {
+            var history = db.CustomerHistories.Where(ch => ch.CustomerId == id).ToList();
+            return history;
+        }
+
+        private void LogHistory(Customer c)
+        {
+            var h = new CustomerHistory()
+            {
+                Address = c.Address,
+                AddressFound = c.AddressFound,
+                Cell = c.Cell,
+                City = db.Cities.Single(city => city.Id == c.CityId).Name,
+                CustomerId = c.Id,
+                Deleted = c.Deleted,
+                Email = c.Email,
+                Home = c.Home,
+                Lat = c.Lat,
+                Lon = c.Lon,
+                Name = c.Name,
+                NoAddress = c.NoAddress,
+                Notes = c.Notes,
+                OtherPhone = c.OtherPhone,
+                PostalCode = c.PostalCode,
+                Restaurant = db.Restaurants.Single(r => r.Id == c.RestaurantId).Name,
+                UpdatedAt = c.UpdatedAt,
+                UpdatedBy = c.UpdatedBy,
+                Work = c.Work
+            };
+            db.CustomerHistories.Add(h);
+            db.SaveChanges();
+        }
+
+        private void ClearHistory(Customer c)
+        {
+            var h = db.CustomerHistories.Where(ch => ch.CustomerId == c.Id).ToList();
+            db.CustomerHistories.RemoveRange(h);
+            db.SaveChanges();
         }
     }
 }

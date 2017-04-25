@@ -21,6 +21,10 @@ namespace AuthServer.Repositories
         {
             var g = db.GiftCards.Find(id);
             if (g == null) throw new NullReferenceException();
+
+            // Log History
+            LogHistory(g);
+
             g.Deleted = true;
             db.SaveChanges();
             return true;
@@ -37,6 +41,10 @@ namespace AuthServer.Repositories
         {
             var gc = db.GiftCards.Find(id);
             if (gc == null) throw new NullReferenceException();
+
+            //clear history
+            ClearHistory(gc);
+
             db.GiftCards.Remove(gc);
             db.SaveChanges();
             return true;
@@ -70,6 +78,10 @@ namespace AuthServer.Repositories
         {
             var gc = db.GiftCards.Find(id);
             if (gc == null) throw new NullReferenceException();
+
+            // log history
+            LogHistory(gc);
+
             gc.Amount = updated.Amount;
             //gc.CustomerId = updated.CustomerId;
             //gc.Deleted = updated.Deleted;
@@ -82,6 +94,40 @@ namespace AuthServer.Repositories
             gc.UpdatedBy = updated.UpdatedBy;
             db.SaveChanges();
             return gc;
+        }
+
+        // *** DEALING WITH HISTORY
+
+        public IEnumerable<GiftCardHistory> GetHistory(int id)
+        {
+            var h = db.GiftCardHistories.Where(hh => hh.GiftCardId == id).ToList();
+            return h;
+        }
+
+        private void LogHistory(GiftCard g)
+        {
+            var h = new GiftCardHistory()
+            {
+                Amount = g.Amount,
+                Deleted = g.Deleted,
+                ExpiryDate = g.ExpiryDate,
+                GiftCardId = g.Id,
+                GiftCardType = db.GiftCardTypes.Single(t => t.Id == g.GiftCardTypeId).Type,
+                IssueDate = g.IssueDate,
+                Notes = g.Notes,
+                Number = g.Number,
+                UpdatedAt = g.UpdatedAt,
+                UpdatedBy = g.UpdatedBy
+            };
+            db.GiftCardHistories.Add(h);
+            db.SaveChanges();
+        }
+
+        private void ClearHistory(GiftCard g)
+        {
+            var h = db.GiftCardHistories.Where(hh => hh.GiftCardId == g.Id).ToList();
+            db.GiftCardHistories.RemoveRange(h);
+            db.SaveChanges();
         }
     }
 }

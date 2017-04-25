@@ -20,6 +20,7 @@ namespace AuthServer.Repositories
         {
             var r = db.Reservations.Find(id);
             if (r == null) throw new NullReferenceException();
+            LogHistory(r);
             r.Deleted = true;
             db.SaveChanges();
             return true;
@@ -36,6 +37,7 @@ namespace AuthServer.Repositories
         {
             var r = db.Reservations.Find(id);
             if (r == null) throw new NullReferenceException();
+            ClearHistory(r);
             db.Reservations.Remove(r);
             db.SaveChanges();
             return true;
@@ -71,6 +73,7 @@ namespace AuthServer.Repositories
         {
             var r = db.Reservations.Find(id);
             if (r == null) throw new NullReferenceException();
+            LogHistory(r);
             //r.CustomerId = updated.CustomerId;
             r.Date = updated.Date;
             //r.Deleted = updated.Deleted;
@@ -84,6 +87,39 @@ namespace AuthServer.Repositories
             r.UpdatedBy = updated.UpdatedBy;
             db.SaveChanges();
             return r;
+        }
+
+        // *** DEALING WITH HISTORY
+        public IEnumerable<ReservationHistory> GetHistory(int id)
+        {
+            var h = db.ReservationHistories.Where(rr => rr.ReservationId == id).ToList();
+            return h;
+        }
+
+        private void LogHistory(Reservation r)
+        {
+            var h = new ReservationHistory()
+            {
+                Date = r.Date,
+                Deleted = r.Deleted,
+                Notes = r.Notes,
+                NumberOfPeople = r.NumberOfPeople,
+                ReservationId = r.Id,
+                ReservationStatus = db.ReservationStatuses.Single(s => s.Id == r.ReservationStatusId).Status,
+                Revenue = r.Revenue,
+                Table = r.Table,
+                Time = r.Time,
+                UpdatedAt = r.UpdatedAt,
+                UpdatedBy = r.UpdatedBy
+            };
+            db.ReservationHistories.Add(h);
+            db.SaveChanges();
+        }
+
+        private void ClearHistory(Reservation r)
+        {
+            var h = db.ReservationHistories.Where(rr => rr.ReservationId == r.Id).ToList();
+            db.ReservationHistories.RemoveRange(h);
         }
     }
 }

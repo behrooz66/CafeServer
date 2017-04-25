@@ -118,6 +118,17 @@ namespace Api.Controllers
         }
 
         [HttpGet]
+        [Route("history/{id}")]
+        [Authorize(Roles = "Manager")]
+        public ActionResult History(int id)
+        {
+            if (!this._helper.OwnesReservation(User, id, this._reservations, this._customers, this._auth))
+                return Forbid();
+            var histories = this._reservations.GetHistory(id);
+            return Ok(histories);
+        }
+
+        [HttpGet]
         [Route("statuses")]
         [Authorize]
         public ActionResult GetStatuses()

@@ -20,6 +20,10 @@ namespace AuthServer.Repositories
         {
             var o = db.Orders.Find(id);
             if (o == null) throw new NullReferenceException();
+
+            // create history record
+            LogHistory(o);
+
             o.Deleted = true;
             db.SaveChanges();
             return true;
@@ -36,6 +40,10 @@ namespace AuthServer.Repositories
         {
             var o = db.Orders.Find(id);
             if (o == null) throw new NullReferenceException();
+
+            // clear history
+            ClearHistory(o);
+
             db.Orders.Remove(o);
             db.SaveChanges();
             return true;
@@ -72,9 +80,12 @@ namespace AuthServer.Repositories
         {
             var o = db.Orders.Find(id);
             if (o == null) throw new NullReferenceException();
-            //o.CustomerId = updated.CustomerId;
+
+            // creating history record
+            LogHistory(o);
+
+            // do the update
             o.Date = updated.Date;
-            //o.Deleted = updated.Deleted;
             o.Notes = updated.Notes;
             o.OrderTypeId = updated.OrderTypeId;
             o.Price = updated.Price;
@@ -83,5 +94,39 @@ namespace AuthServer.Repositories
             db.SaveChanges();
             return o;
         }
+
+
+        // **** DEALING WITH HISTORY
+
+        public IEnumerable<OrderHistory> GetHistory(int id)
+        {
+            var h = db.OrderHistories.Where(oh => oh.OrderId == id).ToList();
+            return h;
+        }
+
+        private void LogHistory(Order o)
+        {
+            var oh = new OrderHistory()
+            {
+                OrderId = o.Id,
+                Date = o.Date,
+                Deleted = o.Deleted,
+                Notes = o.Notes,
+                OrderType = db.OrderTypes.Single(ot => ot.Id == o.OrderTypeId).Type,
+                Price = o.Price,
+                UpdatedAt = o.UpdatedAt,
+                UpdatedBy = o.UpdatedBy
+            };
+            db.OrderHistories.Add(oh);
+            db.SaveChanges();
+        }
+
+        private void ClearHistory(Order o)
+        {
+            var ohs = db.OrderHistories.Where(oh => oh.OrderId == o.Id).ToList();
+            db.OrderHistories.RemoveRange(ohs);
+            db.SaveChanges();
+        }
+
     }
 }
