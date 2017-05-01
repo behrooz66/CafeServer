@@ -59,9 +59,11 @@ namespace AuthServer.Repositories
             return cus;
         }
 
-        public IEnumerable<Customer> GetByRestaurant(int restaurantId)
+        public IEnumerable<Customer> GetByRestaurant(int restaurantId, bool includeDeleted=false)
         {
             var cus = db.Customers.Where(x => x.RestaurantId == restaurantId);
+            if (!includeDeleted)
+                cus = cus.Where(c => !c.Deleted);
             var customers = cus.ToList();
             return customers;
         }
@@ -113,7 +115,7 @@ namespace AuthServer.Repositories
                 Address = c.Address,
                 AddressFound = c.AddressFound,
                 Cell = c.Cell,
-                City = db.Cities.Single(city => city.Id == c.CityId).Name,
+                City = db.Cities.Single(ci => ci.Id == c.CityId).Name,
                 CustomerId = c.Id,
                 Deleted = c.Deleted,
                 Email = c.Email,
@@ -140,5 +142,60 @@ namespace AuthServer.Repositories
             db.CustomerHistories.RemoveRange(h);
             db.SaveChanges();
         }
+
+        
+        // SUMMARIES 
+
+        public dynamic OrderSummary(int id)
+        {
+            var orders = db.Orders.Where(o => o.CustomerId == id)
+                                  .Where(o => !o.Deleted)
+                                  .OrderByDescending(o => o.Date);
+            var count = orders.Count() > 0 ? orders.Count() : 0;
+            var total = count > 0 ? orders.Sum(o => o.Price) : 0;
+            var lastOrderDate = count > 0 ? orders.First().Date.ToString() : "N/A";
+            dynamic result = new
+            {
+                count = count,
+                total = total,
+                lastDate = lastOrderDate
+            };
+            return result;
+        }
+
+        public dynamic GiftCardSummary(int id)
+        {
+            var gifts = db.GiftCards.Where(o => o.CustomerId == id)
+                                  .Where(o => !o.Deleted)
+                                  .OrderByDescending(o => o.IssueDate);
+            var count = gifts.Count() > 0 ? gifts.Count() : 0;
+            var total = count > 0 ? gifts.Sum(o => o.Amount) : 0;
+            var lastGiftDate = count > 0 ? gifts.First().IssueDate.ToString() : "N/A";
+            dynamic result = new
+            {
+                count = count,
+                total = total,
+                lastDate = lastGiftDate
+            };
+            return result;
+        }
+
+        public dynamic ReservationSummary(int id)
+        {
+            var reservations = db.Reservations.Where(o => o.CustomerId == id)
+                                  .Where(o => !o.Deleted)
+                                  .OrderByDescending(o => o.Date);
+            var count = reservations.Count() > 0 ? reservations.Count() : 0;
+            var total = count > 0 ? reservations.Sum(o => o.Revenue) : 0;
+            var lastReservationDate = count > 0 ? reservations.First().Date.ToString() : "N/A";
+            dynamic result = new
+            {
+                count = count,
+                total = total,
+                lastDate = lastReservationDate
+            };
+            return result;
+        }
+
     }
 }

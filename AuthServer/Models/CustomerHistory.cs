@@ -1,13 +1,16 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace AuthServer.Models
 {
+    
     public class CustomerHistory
     {
         [Key]
@@ -34,6 +37,7 @@ namespace AuthServer.Models
         public string Restaurant { get; set; }
 
         [ForeignKey("CustomerId")]
+        [JsonIgnore]
         public virtual Customer Customer { get; set; }
     }
 }

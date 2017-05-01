@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -24,7 +25,9 @@ namespace AuthServer.Models
         public double SELon { get; set; }
 
         public int ProvinceId { get; set; }
+
         [ForeignKey("ProvinceId")]
+        [JsonIgnore]
         public virtual Province Province { get; set; }
     }
 }

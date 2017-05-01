@@ -115,7 +115,18 @@ namespace Api.Controllers
             if (!this._helper.OwnesOrder(User, id, this._rep, this._customers, this._auth))
                 return Forbid();
             this._rep.Archive(id);
-            return Ok(id + " archived.");
+            return Ok(id);
+        }
+
+        [HttpPut]
+        [Route("delete/{id}")]
+        [Authorize(Roles = "Manager")]
+        public ActionResult Delete(int id)
+        {
+            if (!this._helper.OwnesOrder(User, id, this._rep, this._customers, this._auth))
+                return Forbid();
+            this._rep.Archive(id);
+            return Ok(id);
         }
 
         [HttpGet]
