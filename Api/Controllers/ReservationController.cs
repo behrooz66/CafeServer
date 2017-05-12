@@ -118,13 +118,24 @@ namespace Api.Controllers
         }
 
         [HttpPut]
+        [Route("unarchive/{id}")]
+        [Authorize]
+        public ActionResult Unarchive(int id)
+        {
+            if (!this._helper.OwnesReservation(User, id, this._reservations, this._customers, this._auth))
+                return Forbid();
+            this._reservations.Unarchive(id);
+            return Ok(id);
+        }
+
+        [HttpDelete]
         [Route("delete/{id}")]
         [Authorize(Roles = "Manager")]
         public ActionResult Delete(int id)
         {
             if (!this._helper.OwnesReservation(User, id, this._reservations, this._customers, this._auth))
                 return Forbid();
-            this._reservations.Archive(id);
+            this._reservations.Delete(id);
             return Ok(id);
         }
 

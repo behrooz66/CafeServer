@@ -57,7 +57,13 @@ namespace Api.Controllers
         {
             if (!this._helper.OwnesCustomer(User, customerId, this._customers, this._auth))
                 return Forbid();
-            var orders = this._rep.GetByCustomer(customerId).ToList();
+            var roles = this.User.Claims.Where(c => c.Type == "role").Select(c => c.Value).ToList();
+            IEnumerable<Order> orders;
+            if (roles.Contains("Manager"))
+                orders = this._rep.GetByCustomer(customerId, true).ToList();
+            else
+                orders = this._rep.GetByCustomer(customerId, false).ToList();
+
             return Ok(orders);
         }
 
@@ -119,13 +125,24 @@ namespace Api.Controllers
         }
 
         [HttpPut]
+        [Route("unarchive/{id}")]
+        [Authorize]
+        public ActionResult Unarchive(int id)
+        {
+            if (!this._helper.OwnesOrder(User, id, this._rep, this._customers, this._auth))
+                return Forbid();
+            this._rep.Unarchive(id);
+            return Ok(id);
+        }
+
+        [HttpDelete]
         [Route("delete/{id}")]
         [Authorize(Roles = "Manager")]
         public ActionResult Delete(int id)
         {
             if (!this._helper.OwnesOrder(User, id, this._rep, this._customers, this._auth))
                 return Forbid();
-            this._rep.Archive(id);
+            this._rep.Delete(id);
             return Ok(id);
         }
 

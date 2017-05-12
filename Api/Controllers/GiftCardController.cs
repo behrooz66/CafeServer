@@ -115,13 +115,24 @@ namespace Api.Controllers
         }
 
         [HttpPut]
+        [Route("unarchive/{id}")]
+        [Authorize]
+        public ActionResult Unarchive(int id)
+        {
+            if (!this._helper.OwnesGiftCard(User, id, this._giftcards, this._customers, this._auth))
+                return Forbid();
+            this._giftcards.Unarchive(id);
+            return Ok(id);
+        }
+
+        [HttpDelete]
         [Route("delete/{id}")]
         [Authorize(Roles ="Manager")]
         public ActionResult Delete(int id)
         {
             if (!this._helper.OwnesGiftCard(User, id, this._giftcards, this._customers, this._auth))
                 return Forbid();
-            this._giftcards.Archive(id);
+            this._giftcards.Delete(id);
             return Ok(id);
         }
 

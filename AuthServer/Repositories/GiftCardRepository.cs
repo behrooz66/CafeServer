@@ -30,6 +30,19 @@ namespace AuthServer.Repositories
             return true;
         }
 
+        public bool Unarchive(int id)
+        {
+            var r = db.GiftCards.Find(id);
+            if (r == null) throw new NullReferenceException();
+
+            // create history record
+            LogHistory(r);
+
+            r.Deleted = false;
+            db.SaveChanges();
+            return true;
+        }
+
         public int Create(GiftCard giftCard)
         {
             db.GiftCards.Add(giftCard);
@@ -57,12 +70,23 @@ namespace AuthServer.Repositories
             return gc;
         }
 
-        public IEnumerable<GiftCard> GetByCustomer(int customerId)
+        public IEnumerable<GiftCard> GetByCustomer(int customerId, bool includeDeleted = false)
         {
             var giftcards = db.GiftCards
-                            .Where(g => g.CustomerId == customerId)
-                            .Where(g => !g.Deleted)
-                            .ToList();
+                            .Where(g => g.CustomerId == customerId);
+
+            if (!includeDeleted)
+                giftcards = giftcards.Where(g => !g.Deleted);
+
+            var result =    giftcards
+                            .OrderByDescending(g => g.IssueDate)
+                            .ToList()
+                            .Select(g =>
+                            {
+                                g.Customer = null;
+                                g.GiftCardType = db.GiftCardTypes.Single(t => t.Id == g.GiftCardTypeId);
+                                return g;
+                            });
             return giftcards;
         }
 
@@ -70,7 +94,15 @@ namespace AuthServer.Repositories
         {
             List<int> cIds = db.Customers.Where(c => c.RestaurantId == restaurantId).Select(c => c.Id).ToList();
             var giftcards = db.GiftCards.Where(g => cIds.Contains(g.CustomerId))
-                                        .Where(g => !g.Deleted);
+                                        .Where(g => !g.Deleted)
+                                        .OrderByDescending(g => g.IssueDate)
+                                        .ToList()
+                                        .Select(g =>
+                                        {
+                                            g.Customer = null;
+                                            g.GiftCardType = db.GiftCardTypes.Single(t => t.Id == g.GiftCardTypeId);
+                                            return g;
+                                        });
             return giftcards;
         }
 

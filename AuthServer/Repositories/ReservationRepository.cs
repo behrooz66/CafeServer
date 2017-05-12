@@ -26,6 +26,19 @@ namespace AuthServer.Repositories
             return true;
         }
 
+        public bool Unarchive(int id)
+        {
+            var r = db.Reservations.Find(id);
+            if (r == null) throw new NullReferenceException();
+
+            // create history record
+            LogHistory(r);
+
+            r.Deleted = false;
+            db.SaveChanges();
+            return true;
+        }
+
         public int Create(Reservation reservation)
         {
             db.Reservations.Add(reservation);
@@ -50,12 +63,23 @@ namespace AuthServer.Repositories
             return r;
         }
 
-        public IEnumerable<Reservation> GetByCustomer(int customerId)
+        public IEnumerable<Reservation> GetByCustomer(int customerId, bool includeDeleted = false)
         {
             var reservations = db.Reservations
-                        .Where(r => r.Id == customerId)
-                        .Where(r => !r.Deleted);
-            return reservations;
+                        .Where(r => r.Id == customerId);
+            if (!includeDeleted)
+                reservations = reservations.Where(r => !r.Deleted);
+
+            var result = reservations
+                        .OrderByDescending(r => r.Date)
+                        .ToList()
+                        .Select(r =>
+                        {
+                            r.Customer = null;
+                            r.ReservationStatus = db.ReservationStatuses.Single(s => s.Id == r.ReservationStatusId);
+                            return r;
+                        });
+            return result;
         }
 
         public IEnumerable<Reservation> GetByRestaurant(int restaurantId)
@@ -65,7 +89,15 @@ namespace AuthServer.Repositories
                         .Select(c => c.Id).ToList();
             var reservations = db.Reservations
                         .Where(r => cIds.Contains(r.CustomerId))
-                        .Where(r => !r.Deleted);
+                        .Where(r => !r.Deleted)
+                        .OrderByDescending(r => r.Date)
+                        .ToList()
+                        .Select(r =>
+                        {
+                            r.Customer = null;
+                            r.ReservationStatus = db.ReservationStatuses.Single(s => s.Id == r.ReservationStatusId);
+                            return r;
+                        });
             return reservations;
         }
 

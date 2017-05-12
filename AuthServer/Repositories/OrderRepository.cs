@@ -29,6 +29,19 @@ namespace AuthServer.Repositories
             return true;
         }
 
+        public bool Unarchive(int id)
+        {
+            var r = db.Orders.Find(id);
+            if (r == null) throw new NullReferenceException();
+
+            // create history record
+            LogHistory(r);
+
+            r.Deleted = false;
+            db.SaveChanges();
+            return true;
+        }
+
         public int Create(Order order)
         {
             db.Orders.Add(order);
@@ -56,13 +69,21 @@ namespace AuthServer.Repositories
             return o;
         }
 
-        public IEnumerable<Order> GetByCustomer(int customerId)
+        public IEnumerable<Order> GetByCustomer(int customerId, bool includeDeleted = false)
         {
-            var orders = db.Orders
-                         .Where(o => o.CustomerId == customerId)
-                         .Where(o => !o.Deleted)
-                         .ToList();
-            return orders;
+            var orders = db.Orders.Where(o => o.CustomerId == customerId);
+            if (!includeDeleted)
+                orders = orders.Where(o => !o.Deleted);
+
+            var result = orders.ToList()
+                               .OrderByDescending(o => o.Date)
+                               .Select(c =>
+                               {
+                                   c.Customer = null;
+                                   c.OrderType = db.OrderTypes.Single(t => t.Id == c.OrderTypeId);
+                                   return c;
+                               });
+            return result;
         }
 
         public IEnumerable<Order> GetByRestaurant(int restaurantId)
@@ -72,7 +93,14 @@ namespace AuthServer.Repositories
             var orders = db.Orders
                          .Where(o => cIds.Contains(o.CustomerId))
                          .Where(o => !o.Deleted)
-                         .ToList();
+                         .OrderByDescending(o => o.Date)
+                         .ToList()
+                         .Select(o =>
+                         {
+                             o.Customer = null;
+                             o.OrderType = db.OrderTypes.Single(t => t.Id == o.OrderTypeId);
+                             return o;
+                         });
             return orders;
         }
 

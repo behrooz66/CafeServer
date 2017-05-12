@@ -13,10 +13,12 @@ namespace AuthServer.RepositoryInterfaces
         bool Delete(int id);
         bool Archive(int id);
         //IEnumerable<Order> GetAll();
-        IEnumerable<Order> GetByCustomer(int customerId);
+        IEnumerable<Order> GetByCustomer(int customerId, bool includeDeleted=false);
         IEnumerable<Order> GetByRestaurant(int restaurantId);
 
         IEnumerable<OrderHistory> GetHistory(int id);
+
+        bool Unarchive(int id);
 
         Order Get(int id);
     }
