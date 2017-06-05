@@ -56,7 +56,12 @@ namespace Api.Controllers
         {
             if (!this._helper.OwnesCustomer(User, customerId, _customers, _auth))
                 return Forbid();
-            var giftcards = this._giftcards.GetByCustomer(customerId).ToList();
+            var roles = this.User.Claims.Where(c => c.Type == "role").Select(c => c.Value).ToList();
+            IEnumerable<GiftCard> giftcards;
+            if (roles.Contains("Manager"))
+                giftcards = this._giftcards.GetByCustomer(customerId, true).ToList();
+            else
+                giftcards = this._giftcards.GetByCustomer(customerId, false).ToList();
             return Ok(giftcards);
         }
 

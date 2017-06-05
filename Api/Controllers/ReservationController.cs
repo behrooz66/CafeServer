@@ -56,7 +56,12 @@ namespace Api.Controllers
         {
             if (!this._helper.OwnesCustomer(User, customerId, _customers, _auth))
                 return Forbid();
-            var reservations = this._reservations.GetByCustomer(customerId).ToList();
+            var roles = this.User.Claims.Where(c => c.Type == "role").Select(c => c.Value).ToList();
+            IEnumerable<Reservation> reservations;
+            if (roles.Contains("Manager"))
+                reservations = this._reservations.GetByCustomer(customerId, true).ToList();
+            else
+                reservations = this._reservations.GetByCustomer(customerId, false).ToList();
             return Ok(reservations);
         }
 

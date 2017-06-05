@@ -87,7 +87,7 @@ namespace AuthServer.Repositories
                                 g.GiftCardType = db.GiftCardTypes.Single(t => t.Id == g.GiftCardTypeId);
                                 return g;
                             });
-            return giftcards;
+            return result;
         }
 
         public IEnumerable<GiftCard> GetByRestaurant(int restaurantId)

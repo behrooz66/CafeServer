@@ -66,7 +66,7 @@ namespace AuthServer.Repositories
         public IEnumerable<Reservation> GetByCustomer(int customerId, bool includeDeleted = false)
         {
             var reservations = db.Reservations
-                        .Where(r => r.Id == customerId);
+                        .Where(r => r.CustomerId == customerId);
             if (!includeDeleted)
                 reservations = reservations.Where(r => !r.Deleted);
 
