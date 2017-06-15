@@ -51,6 +51,7 @@ namespace AuthServer.Repositories
 
         public User GetUserById(string userId)
         {
+            var x = db.Users.ToList();
             var user = db.Users.Where(u => u.Id == userId).FirstOrDefault();
             return user;
         }
