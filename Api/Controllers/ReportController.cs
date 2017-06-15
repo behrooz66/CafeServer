@@ -49,6 +49,7 @@ namespace Api.Controllers
         }
 
 
+        #region MonthlySummaries
         // MONTHLY SUMMARIES 
 
         [Route("ordersMonthlySum")]
@@ -185,8 +186,9 @@ namespace Api.Controllers
         }
 
         // MONTHLY SUMMARIES end.
+        #endregion
 
-
+        #region RecordDetails
         // RECORD DETAILS 
 
         [Route("orderRecords")]
@@ -293,7 +295,114 @@ namespace Api.Controllers
             return Ok(G);
         }
 
-            // RECORD DETAILS end.
+        // RECORD DETAILS end.
+        #endregion
+
+        #region TopCustomers
+
+        [Route("ordersTopCustomers")]
+        [HttpGet]
+        [Authorize(Roles = "Manager")]
+        public ActionResult OrdersTopCustomers(DateTime? dateFrom = null, DateTime? dateTo = null, double? minRevenue = 0, int? minOrder = 1)
+        {
+            var restaurantId = _helper.GetUserEntity(User, _auth).RestaurantId;
+            var startDate = dateFrom ?? _orders.GetByRestaurant(restaurantId).Last().Date;
+            var endDate = dateTo ?? _orders.GetByRestaurant(restaurantId).First().Date;
+
+            try
+            {
+                var result = _customers.GetByRestaurant(restaurantId, false).Select(x => new
+                {
+                    x.Id,
+                    x.Name,
+                    Orders = _orders.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate).Count(),
+                    Revenue = _orders.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate).Sum(o => (decimal?)o.Price) ?? 0,
+                    LastOrderOn = _orders.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate).OrderByDescending(o => o.Date).FirstOrDefault().Date
+                }).Where(o => o.Orders >= minOrder)
+                  .Where(o => (double)o.Revenue >= minRevenue)
+                  .OrderByDescending(o => o.Revenue).ToList();
+                return Ok(result);
+            }
+            catch (NullReferenceException)
+            {
+                return Ok(Json("No Result"));
+            }
+        }
+
+        [Route("reservationsTopCustomers")]
+        [HttpGet]
+        [Authorize(Roles = "Manager")]
+        public ActionResult ReservationsTopCustomers(DateTime? dateFrom = null, DateTime? dateTo = null, double? minRevenue = 0, int? minReservation = 1)
+        {
+            var restaurantId = _helper.GetUserEntity(User, _auth).RestaurantId;
+            var startDate = dateFrom ?? _reservations.GetByRestaurant(restaurantId).Last().Date;
+            var endDate = dateTo ?? _reservations.GetByRestaurant(restaurantId).First().Date;
+
+
+            try
+            {
+                // important: reservation status IDs are hard coded. They must be matched with what is in the database table:
+                // dbo.ReservationStatuses
+                var result = _customers.GetByRestaurant(restaurantId, false).Select(x => new
+                {
+                    x.Id,
+                    x.Name,
+                    Reservations = _reservations.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate).Where(r => r.ReservationStatusId != 2 && r.ReservationStatusId != 3).Count(),
+                    Revenue = _reservations.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate).Where(r => r.ReservationStatusId != 2 && r.ReservationStatusId != 3).Sum(o => (decimal?)o.Revenue) ?? 0,
+                    LastReservationOn = _reservations.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate).Where(r => r.ReservationStatusId != 2 && r.ReservationStatusId != 3).OrderByDescending(o => o.Date).FirstOrDefault().Date
+                }).Where(o => o.Reservations >= minReservation)
+                  .Where(o => (double)o.Revenue >= minRevenue)
+                  .OrderByDescending(o => o.Revenue).ToList();
+                return Ok(result);
+            }
+            catch (NullReferenceException)
+            {
+                return Ok(Json("No Result"));
+            }
+        }
+
+        [Route("giftCardsTopCustomers")]
+        [HttpGet]
+        [Authorize(Roles = "Manager")]
+        public ActionResult GiftCardsTopCustomers(DateTime? dateFrom = null, DateTime? dateTo = null, double? minRevenue = 0, int? minCards = 1, int? typeId = null)
+        {
+            var restaurantId = _helper.GetUserEntity(User, _auth).RestaurantId;
+            var startDate = dateFrom ?? _reservations.GetByRestaurant(restaurantId).Last().Date;
+            var endDate = dateTo ?? _reservations.GetByRestaurant(restaurantId).First().Date;
+            var allTypeIds = _giftCardTypes.GetAll().Select(t => t.Id).ToList();
+            var acceptedIds = new List<int>();
+
+            if (typeId == null || typeId == 0)
+                acceptedIds = allTypeIds;
+            else
+            {
+                acceptedIds.Clear();
+                acceptedIds.Add((int)typeId);
+            }
+
+            
+            try
+            {
+                var result = _customers.GetByRestaurant(restaurantId, false).Select(x => new
+                {
+                    x.Id,
+                    x.Name,
+                    GiftCards = _giftcards.GetByCustomer(x.Id, false).Where(o => o.IssueDate >= startDate && o.IssueDate <= endDate).Count(),
+                    Revenue = _giftcards.GetByCustomer(x.Id, false).Where(o => o.IssueDate >= startDate && o.IssueDate <= endDate).Sum(o => (decimal?)o.Amount) ?? 0,
+                    LastGiftCardrOn = _giftcards.GetByCustomer(x.Id, false).Where(o => o.IssueDate >= startDate && o.IssueDate <= endDate).OrderByDescending(o => o.IssueDate).FirstOrDefault().IssueDate
+                }).Where(o => o.GiftCards >= minCards)
+                  .Where(o => (double)o.Revenue >= minRevenue)
+                  .OrderByDescending(o => o.Revenue).ToList();
+                return Ok(result);
+            }
+            catch(NullReferenceException)
+            {
+                return Ok(Json("No Result"));
+            }
+            
+        }
+
+        #endregion  
 
 
 
@@ -305,10 +414,8 @@ namespace Api.Controllers
 
 
 
-
-
-            // internal helpers
-            private string[] GetMonthsArray(DateTime start, DateTime end)
+        // internal helpers
+        private string[] GetMonthsArray(DateTime start, DateTime end)
         {
             int numberOfMonths = ((end.Year - start.Year) * 12) + end.Month - start.Month + 1;
             string[] months = new string[numberOfMonths];
