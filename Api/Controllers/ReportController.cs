@@ -8,6 +8,7 @@ using AuthServer.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Api.Helpers;
 using System.Dynamic;
+using System.Collections;
 
 namespace Api.Controllers
 {
@@ -21,7 +22,6 @@ namespace Api.Controllers
         private ICustomerRepository _customers;
         private IOrderTypeRepository _orderTypes;
         private IReservationStatusRepository _reservationStatuses;
-        private IGiftCardRepository _giftCards;
         private IGiftCardTypeRepository _giftCardTypes;
         private IHelper _helper;
 
@@ -49,7 +49,7 @@ namespace Api.Controllers
         }
 
 
-        #region MonthlySummaries
+        #region Monthly Summaries
         // MONTHLY SUMMARIES 
 
         [Route("ordersMonthlySum")]
@@ -188,7 +188,7 @@ namespace Api.Controllers
         // MONTHLY SUMMARIES end.
         #endregion
 
-        #region RecordDetails
+        #region Record Details
         // RECORD DETAILS 
 
         [Route("orderRecords")]
@@ -298,7 +298,7 @@ namespace Api.Controllers
         // RECORD DETAILS end.
         #endregion
 
-        #region TopCustomers
+        #region Top Customers
 
         [Route("ordersTopCustomers")]
         [HttpGet]
@@ -325,7 +325,7 @@ namespace Api.Controllers
             }
             catch (NullReferenceException)
             {
-                return Ok(Json("No Result"));
+                return NoContent();
             }
         }
 
@@ -357,7 +357,7 @@ namespace Api.Controllers
             }
             catch (NullReferenceException)
             {
-                return Ok(Json("No Result"));
+                return NoContent();
             }
         }
 
@@ -397,22 +397,188 @@ namespace Api.Controllers
             }
             catch(NullReferenceException)
             {
-                return Ok(Json("No Result"));
+                return NoContent();
             }
             
         }
 
-        #endregion  
+        #endregion
 
+        #region Daily Summaries
+        // DAILY SUMMARIES
 
+        [Route("ordersDailySum")]
+        [HttpGet]
+        [Authorize(Roles = "Manager")]
+        public ActionResult ordersDailySum(DateTime? dateFrom = null, DateTime? dateTo = null, int? typeId = null)
+        {
+            var restaurantId = _helper.GetUserEntity(User, _auth).RestaurantId;
+            try
+            {
+                var startDate = dateFrom ?? _orders.GetByRestaurant(restaurantId).OrderBy(o => o.Date).First().Date;
+                var endDate = dateTo ?? _orders.GetByRestaurant(restaurantId).OrderBy(o => o.Date).Last().Date;
+                var types = _orderTypes.GetAll().ToList();
+                var acceptedTypes = types.ToList();
+                acceptedTypes.Clear();
+                if (typeId == null || typeId == 0)
+                {
+                    acceptedTypes = types;
+                }
+                else
+                {
 
+                    acceptedTypes.Add(_orderTypes.Get((int)typeId));
+                }
+                var x = _orders.GetByRestaurant(restaurantId)
+                        .Select(o => o.Date.Date)
+                        .OrderBy(o => o.Date)
+                        .Distinct().ToList();
 
+                dynamic[] result = new dynamic[x.Count()];
+                for (int i = 0; i < x.Count(); i++)
+                {
+                    result[i] = new ExpandoObject();
+                    result[i].Date = x[i].Date;
+                    foreach (var t in acceptedTypes)
+                    {
+                        ((IDictionary<String, Object>)result[i])[t.Type.Replace(" ", "") + "_revenue"] =
+                            _orders.GetByRestaurant(restaurantId)
+                                   .Where(g => g.Date.Date == result[i].Date.Date)
+                                   .Where(g => g.OrderTypeId == t.Id)
+                                   .Sum(g => g.Price);
 
+                        ((IDictionary<String, Object>)result[i])[t.Type.Replace(" ", "") + "_number"] =
+                             _orders.GetByRestaurant(restaurantId)
+                                   .Where(g => g.Date.Date == result[i].Date.Date)
+                                   .Where(g => g.OrderTypeId == t.Id)
+                                   .Count();
+                    }
+                }
+                return Ok(result);
+            }
+            catch (InvalidOperationException)
+            {
+                return NoContent();
+            }
+            catch (NullReferenceException)
+            {
+                return NoContent();
+            }
+        }
 
+        [Route("reservationsDailySum")]
+        [HttpGet]
+        [Authorize(Roles = "Manager")]
+        public ActionResult reservationsDailySum(DateTime? dateFrom = null, DateTime? dateTo = null, int? statusId = null)
+        {
+            var restaurantId = _helper.GetUserEntity(User, _auth).RestaurantId;
+            try
+            {
+                var startDate = dateFrom ?? _reservations.GetByRestaurant(restaurantId).OrderBy(o => o.Date).First().Date;
+                var endDate = dateTo ?? _reservations.GetByRestaurant(restaurantId).OrderBy(o => o.Date).Last().Date;
+                var statuses = _reservationStatuses.GetAll().ToList();
+                var acceptedStatuses = statuses.ToList();
+                acceptedStatuses.Clear();
+                if (statusId == null || statusId == 0)
+                {
+                    acceptedStatuses = statuses;
+                }
+                else
+                {
+                    acceptedStatuses.Add(_reservationStatuses.Get((int)statusId));
+                }
+                var x = _reservations.GetByRestaurant(restaurantId)
+                        .Select(r => r.Date.Date)
+                        .OrderBy(r => r.Date)
+                        .Distinct().ToList();
 
+                dynamic[] result = new dynamic[x.Count()];
+                for (int i = 0; i < x.Count(); i++)
+                {
+                    result[i] = new ExpandoObject();
+                    result[i].Date = x[i].Date;
+                    foreach (var s in acceptedStatuses)
+                    {
+                        ((IDictionary<String, Object>)result[i])[s.Status.Replace(" ", "") + "_revenue"] =
+                                _reservations.GetByRestaurant(restaurantId)
+                                        .Where(g => g.Date.Date == result[i].Date.Date)
+                                        .Where(g => g.ReservationStatusId == s.Id)
+                                        .Sum(g => g.Revenue);
 
+                        ((IDictionary<String, Object>)result[i])[s.Status.Replace(" ", "") + "_number"] =
+                                _reservations.GetByRestaurant(restaurantId)
+                                        .Where(g => g.Date.Date == result[i].Date.Date)
+                                        .Where(g => g.ReservationStatusId == s.Id)
+                                        .Count();
+                    }
+                }
+                return Ok(result);
+            }
+            catch (InvalidOperationException)
+            {
+                return NoContent();
+            }
+            catch (NullReferenceException)
+            {
+                return NoContent();
+            }
+        }
 
+        [Route("giftCardsDailySum")]
+        [HttpGet]
+        [Authorize(Roles = "Manager")]
+        public ActionResult giftCardsDailySum(DateTime? dateFrom = null, DateTime? dateTo = null, int? typeId = null)
+        {
+            var restaurantId = _helper.GetUserEntity(User, _auth).RestaurantId;
+            try
+            {
+                var startDate = dateFrom ?? _giftcards.GetByRestaurant(restaurantId).OrderBy(o => o.IssueDate).First().IssueDate;
+                var endDate = dateTo ?? _giftcards.GetByRestaurant(restaurantId).OrderBy(o => o.IssueDate).Last().IssueDate;
+                var types = _giftCardTypes.GetAll().ToList();
+                var acceptedTypes = types.ToList();
+                acceptedTypes.Clear();
+                if (typeId == null || typeId == 0)
+                    acceptedTypes = types;
+                else
+                    acceptedTypes.Add(_giftCardTypes.Get((int)typeId));
+                var x = _giftcards.GetByRestaurant(restaurantId)
+                        .Select(g => g.IssueDate.Date)
+                        .OrderBy(g => g.Date)
+                        .Distinct().ToList();
+                dynamic[] result = new dynamic[x.Count()];
+                for (int i = 0; i < x.Count(); i++)
+                {
+                    result[i] = new ExpandoObject();
+                    result[i].Date = x[i].Date;
+                    foreach (var t in acceptedTypes)
+                    {
+                        ((IDictionary<String, Object>)result[i])[t.Type.Replace(" ", "") + "_revenue"] =
+                            _giftcards.GetByRestaurant(restaurantId)
+                                    .Where(g => g.IssueDate.Date == result[i].Date.Date)
+                                    .Where(g => g.GiftCardTypeId == t.Id)
+                                    .Sum(g => g.Amount);
 
+                        ((IDictionary<String, Object>)result[i])[t.Type.Replace(" ", "") + "_number"] =
+                            _giftcards.GetByRestaurant(restaurantId)
+                                    .Where(g => g.IssueDate.Date == result[i].Date.Date)
+                                    .Where(g => g.GiftCardTypeId == t.Id)
+                                    .Count();
+                    }
+                }
+                return Ok(result);
+            }
+            catch (InvalidOperationException)
+            {
+                return NoContent();
+            }
+            catch (NullReferenceException)
+            {
+                return NoContent();
+            }
+        }
+
+        // DAILY SUMMARIES end
+        #endregion
 
         // internal helpers
         private string[] GetMonthsArray(DateTime start, DateTime end)
@@ -426,33 +592,6 @@ namespace Api.Controllers
             };
             return months;
         }
-
-
-
-
-
-
-        // Garbage:
-        /*[Route("reservationsMonthlySum2")]
-        [HttpGet]
-        [Authorize(Roles = "Manager")]
-        public ActionResult ReservationsMonthlySum2(DateTime? dateFrom = null, DateTime? dateTo = null)
-        {
-            var restaurantId = _helper.GetUserEntity(User, _auth).RestaurantId;
-            var startDate = dateFrom ?? _reservations.GetByRestaurant(restaurantId).Last().Date;
-            var endDate = dateTo ?? _reservations.GetByRestaurant(restaurantId).First().Date;
-            string[] months = GetMonthsArray(startDate, endDate);
-            dynamic[] res = new dynamic[months.Length];
-            for (int i = 0; i < months.Length; i++)
-            {
-                res[i] = new ExpandoObject();
-                var year = int.Parse(months[i].Substring(0, 4));
-                var month = int.Parse(months[i].Substring(5, 2));
-                res[i].Month = months[i];
-
-                res[i].Revenue = _reservations.GetByRestaurant(restaurantId).Where(r => r.Date.Year == year && r.Date.Month == month).Where(r => r.ReservationStatusId == 1);
-            }
-            return Ok();
-        }*/
+        
     }
 }
