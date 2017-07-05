@@ -65,6 +65,8 @@ namespace Api.Controllers
             dynamic result = new dynamic[months.Length];
             var orderTypes = _orderTypes.GetAll().ToArray();
 
+
+
             for (int i=0; i<months.Length; i++)
             {
                 result[i] = new ExpandoObject();
@@ -238,6 +240,7 @@ namespace Api.Controllers
                 ReservationStatus = _reservationStatuses.GetAll().SingleOrDefault(s => s.Id == x.ReservationStatusId).Status,
                 Customer = _customers.Get(x.CustomerId).Name,
                 x.Date,
+                x.Time,
                 x.Revenue,
                 x.UpdatedAt,
                 x.UpdatedBy,
@@ -270,6 +273,7 @@ namespace Api.Controllers
                 x.GiftCardTypeId,
                 GiftCardType = _giftCardTypes.GetAll().SingleOrDefault(s => s.Id == x.GiftCardTypeId).Type,
                 Customer = _customers.Get(x.CustomerId).Name,
+                x.Number,
                 x.IssueDate,
                 x.ExpiryDate,
                 x.Amount,
@@ -315,13 +319,20 @@ namespace Api.Controllers
                 {
                     x.Id,
                     x.Name,
-                    Orders = _orders.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate).Count(),
-                    Revenue = _orders.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate).Sum(o => (decimal?)o.Price) ?? 0,
-                    LastOrderOn = _orders.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate).OrderByDescending(o => o.Date).FirstOrDefault().Date
-                }).Where(o => o.Orders >= minOrder)
-                  .Where(o => (double)o.Revenue >= minRevenue)
-                  .OrderByDescending(o => o.Revenue).ToList();
-                return Ok(result);
+                    Orders = _orders.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate)
+                                                               .Count(),
+                    Revenue = _orders.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate)
+                                                                .Sum(o => (decimal?)o.Price) ?? 0,
+                    LastOrderOn = _orders.GetByCustomer(x.Id, false)
+                                    .Where(o => o.Date >= startDate && o.Date <= endDate).Count() > 0 ?
+                                  _orders.GetByCustomer(x.Id, false)
+                                  .Where(o => o.Date >= startDate && o.Date <= endDate)
+                                  .OrderByDescending(o => o.Date)
+                                  .FirstOrDefault().Date.ToString() : "Never"
+                            }).Where(o => o.Orders >= minOrder)
+                          .Where(o => (double)o.Revenue >= minRevenue)
+                          .OrderByDescending(o => o.Revenue).ToList();
+                                    return Ok(result);
             }
             catch (NullReferenceException)
             {
@@ -332,33 +343,41 @@ namespace Api.Controllers
         [Route("reservationsTopCustomers")]
         [HttpGet]
         [Authorize(Roles = "Manager")]
-        public ActionResult ReservationsTopCustomers(DateTime? dateFrom = null, DateTime? dateTo = null, double? minRevenue = 0, int? minReservation = 1)
+        public ActionResult ReservationsTopCustomers(DateTime? dateFrom = null, DateTime? dateTo = null,
+                                                     double? minRevenue = 0, int? minReservation = 1, bool includeUnspecified = false)
         {
             var restaurantId = _helper.GetUserEntity(User, _auth).RestaurantId;
             var startDate = dateFrom ?? _reservations.GetByRestaurant(restaurantId).Last().Date;
             var endDate = dateTo ?? _reservations.GetByRestaurant(restaurantId).First().Date;
 
-
-            try
+            var result = _customers.GetByRestaurant(restaurantId, false).Select(x => new
             {
-                // important: reservation status IDs are hard coded. They must be matched with what is in the database table:
-                // dbo.ReservationStatuses
-                var result = _customers.GetByRestaurant(restaurantId, false).Select(x => new
-                {
-                    x.Id,
-                    x.Name,
-                    Reservations = _reservations.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate).Where(r => r.ReservationStatusId != 2 && r.ReservationStatusId != 3).Count(),
-                    Revenue = _reservations.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate).Where(r => r.ReservationStatusId != 2 && r.ReservationStatusId != 3).Sum(o => (decimal?)o.Revenue) ?? 0,
-                    LastReservationOn = _reservations.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate).Where(r => r.ReservationStatusId != 2 && r.ReservationStatusId != 3).OrderByDescending(o => o.Date).FirstOrDefault().Date
-                }).Where(o => o.Reservations >= minReservation)
+                x.Id,
+                x.Name,
+                // we have to do a bit of hardcoding for statuses here (against my will). We exclude status 2 and 3.
+                //For 4 (unspecified), we conditionally exclude it. 0 is just there to help us write the statement.
+                Reservations = _reservations.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate)
+                                                                           .Where(r => r.ReservationStatusId != 2 && r.ReservationStatusId != 3)
+                                                                           .Where(r => r.ReservationStatusId != (includeUnspecified ? 0 : 4))
+                                                                           .Count(),
+                Revenue = _reservations.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate)
+                                                                      .Where(r => r.ReservationStatusId != 2 && r.ReservationStatusId != 3)
+                                                                      .Where(r => r.ReservationStatusId != (includeUnspecified ? 0 : 4))
+                                                                      .Sum(o => (decimal?)o.Revenue) ?? 0,
+                LastReservationOn = _reservations.GetByCustomer(x.Id, false)
+                                        .Where(o => o.Date >= startDate && o.Date <= endDate)
+                                        .Where(r => r.ReservationStatusId != 2 && r.ReservationStatusId != 3)
+                                        .Where(r => r.ReservationStatusId != (includeUnspecified ? 0 : 4))
+                                        .Count() > 0 ?
+                                _reservations.GetByCustomer(x.Id, false).Where(o => o.Date >= startDate && o.Date <= endDate)
+                                    .Where(r => r.ReservationStatusId != 2 && r.ReservationStatusId != 3)
+                                    .Where(r => r.ReservationStatusId != (includeUnspecified ? 0 : 4))
+                                    .OrderByDescending(o => o.Date)
+                                    .FirstOrDefault().Date.ToString() : "Never"
+            }).Where(o => o.Reservations >= minReservation)
                   .Where(o => (double)o.Revenue >= minRevenue)
                   .OrderByDescending(o => o.Revenue).ToList();
-                return Ok(result);
-            }
-            catch (NullReferenceException)
-            {
-                return NoContent();
-            }
+            return Ok(result);
         }
 
         [Route("giftCardsTopCustomers")]
@@ -367,8 +386,8 @@ namespace Api.Controllers
         public ActionResult GiftCardsTopCustomers(DateTime? dateFrom = null, DateTime? dateTo = null, double? minRevenue = 0, int? minCards = 1, int? typeId = null)
         {
             var restaurantId = _helper.GetUserEntity(User, _auth).RestaurantId;
-            var startDate = dateFrom ?? _reservations.GetByRestaurant(restaurantId).Last().Date;
-            var endDate = dateTo ?? _reservations.GetByRestaurant(restaurantId).First().Date;
+            var startDate = dateFrom ?? _giftcards.GetByRestaurant(restaurantId).Last().IssueDate;
+            var endDate = dateTo ?? _giftcards.GetByRestaurant(restaurantId).First().IssueDate;
             var allTypeIds = _giftCardTypes.GetAll().Select(t => t.Id).ToList();
             var acceptedIds = new List<int>();
 
@@ -383,13 +402,29 @@ namespace Api.Controllers
             
             try
             {
+                var kir = _giftcards.GetByCustomer(1, false).ToList();
+
                 var result = _customers.GetByRestaurant(restaurantId, false).Select(x => new
                 {
                     x.Id,
                     x.Name,
-                    GiftCards = _giftcards.GetByCustomer(x.Id, false).Where(o => o.IssueDate >= startDate && o.IssueDate <= endDate).Count(),
-                    Revenue = _giftcards.GetByCustomer(x.Id, false).Where(o => o.IssueDate >= startDate && o.IssueDate <= endDate).Sum(o => (decimal?)o.Amount) ?? 0,
-                    LastGiftCardrOn = _giftcards.GetByCustomer(x.Id, false).Where(o => o.IssueDate >= startDate && o.IssueDate <= endDate).OrderByDescending(o => o.IssueDate).FirstOrDefault().IssueDate
+                    GiftCards = _giftcards.GetByCustomer(x.Id, false)
+                                   .Where(o => o.IssueDate >= startDate && o.IssueDate <= endDate)
+                                   .Where(o => acceptedIds.Contains(o.GiftCardTypeId))
+                                   .Count(),
+                    Revenue = _giftcards.GetByCustomer(x.Id, false)
+                                   .Where(o => o.IssueDate >= startDate && o.IssueDate <= endDate)
+                                   .Where(o => acceptedIds.Contains(o.GiftCardTypeId))
+                                   .Sum(o => (decimal?)o.Amount) ?? 0,
+                    LastGiftCardrOn = _giftcards.GetByCustomer(x.Id, false)
+                                        .Where(o => o.IssueDate >= startDate && o.IssueDate <= endDate)
+                                        .Where(o => acceptedIds.Contains(o.GiftCardTypeId))
+                                        .Count() > 0 ?
+                                _giftcards.GetByCustomer(x.Id, false)
+                                .Where(o => o.IssueDate >= startDate && o.IssueDate <= endDate)
+                                .Where(o => acceptedIds.Contains(o.GiftCardTypeId))
+                                .OrderByDescending(o => o.IssueDate)
+                                .FirstOrDefault().IssueDate.ToString() : "Never"
                 }).Where(o => o.GiftCards >= minCards)
                   .Where(o => (double)o.Revenue >= minRevenue)
                   .OrderByDescending(o => o.Revenue).ToList();
@@ -430,6 +465,7 @@ namespace Api.Controllers
                     acceptedTypes.Add(_orderTypes.Get((int)typeId));
                 }
                 var x = _orders.GetByRestaurant(restaurantId)
+                        .Where(o => o.Date >= startDate && o.Date <= endDate)
                         .Select(o => o.Date.Date)
                         .OrderBy(o => o.Date)
                         .Distinct().ToList();
@@ -453,6 +489,7 @@ namespace Api.Controllers
                                    .Where(g => g.OrderTypeId == t.Id)
                                    .Count();
                     }
+                    
                 }
                 return Ok(result);
             }

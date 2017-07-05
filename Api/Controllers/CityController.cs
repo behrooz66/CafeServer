@@ -19,11 +19,21 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("getByProvince")]
+        [Authorize]
         //[Authorize]
         public ActionResult GetByProvince(int provinceId)
         {
             var c = this._rep.GetByProvince(provinceId);
             return Ok(c);
+        }
+
+        [HttpGet]
+        [Route("get/{id}")]
+        [Authorize]
+        public ActionResult Get(int id)
+        {
+            var city = this._rep.Get(id);
+            return Ok(city);
         }
     }
 }

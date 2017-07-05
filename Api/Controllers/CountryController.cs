@@ -19,6 +19,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("get")]
+        [Authorize]
         //[Authorize]
         public ActionResult Get() {
             var c = this._rep.GetAll();
