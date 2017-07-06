@@ -58,6 +58,7 @@ namespace Api
                 .AddTransient<IReservationRepository, ReservationRepository>()
                 .AddTransient<IReservationStatusRepository, ReservationStatusRepository>()
                 .AddTransient<IRestaurantRepository, RestaurantRepository>()
+                .AddTransient<IAdminRepository, AdminRepository>()
                 .AddTransient<IHelper, Helper>();
 
             services.AddMvc();

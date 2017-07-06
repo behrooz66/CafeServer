@@ -17,6 +17,7 @@ namespace AuthServer.Models
         public string Password { get; set; }
         public bool Active { get; set; }
         public bool Verified { get; set; }
+        public bool MustChangePassword { get; set; }
 
         public int RestaurantId { get; set; }
 

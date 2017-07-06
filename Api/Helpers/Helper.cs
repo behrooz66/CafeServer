@@ -86,5 +86,14 @@ namespace Api.Helpers
                 return true;
             return false;
         }
+
+        public bool OwnesUser(ClaimsPrincipal user, string userId, IAdminRepository _admin,  IAuthRepository _auth)
+        {
+            var usersRestaurant = _admin.GetUser(userId).RestaurantId;
+            var ownersRestaurant = this.GetUserEntity(user, _auth).RestaurantId;
+            if (usersRestaurant == ownersRestaurant)
+                return true;
+            return false;
+        }
     }
 }

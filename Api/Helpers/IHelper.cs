@@ -34,5 +34,8 @@ namespace Api.Helpers
 
         // checks if the reservation belongs to a restaurant
         bool OwnesReservation(ClaimsPrincipal user, int reservationsId, IReservationRepository _reservations, ICustomerRepository _customers, IAuthRepository _auth);
+
+        // checks if the user belongs to a restaurant
+        bool OwnesUser(ClaimsPrincipal user, string userId, IAdminRepository _admin,  IAuthRepository _auth);
     }
 }
