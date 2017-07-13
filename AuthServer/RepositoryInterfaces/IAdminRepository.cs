@@ -15,6 +15,7 @@ namespace AuthServer.RepositoryInterfaces
 
         IEnumerable<User> GetUsersByRestaurant(int restaurantId);
         User GetUser(string id);
+        bool UserExists(string username);
 
         // Support Tickets
         // todo: later!

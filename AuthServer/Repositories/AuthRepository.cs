@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AuthServer.Infrastructure;
 using AuthServer.Models;
 using AuthServer.RepositoryInterfaces;
+using CryptoHelper;
 
 namespace AuthServer.Repositories
 {
@@ -66,7 +67,7 @@ namespace AuthServer.Repositories
         {
             var user = db.Users.Where(u => u.Username == username).FirstOrDefault();
             if (user == null) return false;
-            if (user.Password == password) return true;
+            if (Crypto.VerifyHashedPassword(user.Password, password)) return true;
             return false;
         }
     }

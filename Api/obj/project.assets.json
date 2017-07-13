@@ -19,6 +19,19 @@
           "lib/netstandard1.3/AutoMapper.dll": {}
         }
       },
+      "CryptoHelper/2.1.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Cryptography.KeyDerivation": "1.1.1",
+          "NETStandard.Library": "1.6.1"
+        },
+        "compile": {
+          "lib/netstandard1.3/CryptoHelper.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/CryptoHelper.dll": {}
+        }
+      },
       "IdentityModel/2.1.1": {
         "type": "package",
         "dependencies": {
@@ -294,7 +307,7 @@
           "lib/netstandard1.3/Microsoft.AspNetCore.Cors.dll": {}
         }
       },
-      "Microsoft.AspNetCore.Cryptography.Internal/1.1.0": {
+      "Microsoft.AspNetCore.Cryptography.Internal/1.1.1": {
         "type": "package",
         "dependencies": {
           "NETStandard.Library": "1.6.1"
@@ -304,6 +317,19 @@
         },
         "runtime": {
           "lib/netstandard1.3/Microsoft.AspNetCore.Cryptography.Internal.dll": {}
+        }
+      },
+      "Microsoft.AspNetCore.Cryptography.KeyDerivation/1.1.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Cryptography.Internal": "1.1.1",
+          "NETStandard.Library": "1.6.1"
+        },
+        "compile": {
+          "lib/netstandard1.3/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll": {}
         }
       },
       "Microsoft.AspNetCore.DataProtection/1.1.0": {
@@ -4137,6 +4163,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v1.0",
         "dependencies": {
+          "CryptoHelper": "2.1.1",
           "IdentityServer4": "1.0.0",
           "IdentityServer4.EntityFramework": "1.0.0",
           "Microsoft.AspNetCore.Diagnostics": "1.0.2",
@@ -4168,6 +4195,19 @@
         "lib/netstandard1.3/AutoMapper.xml",
         "lib/portable-net45+win8+wpa81/AutoMapper.dll",
         "lib/portable-net45+win8+wpa81/AutoMapper.xml"
+      ]
+    },
+    "CryptoHelper/2.1.1": {
+      "sha512": "eRtML1OF2MVm7n5ME9KhS4/wulJHVn8TePbwaDbxW/TAGefwysLb2f7mLhCgTcasL0GLfdB5Wxk51NOZqWGgeg==",
+      "type": "package",
+      "path": "cryptohelper/2.1.1",
+      "files": [
+        "cryptohelper.2.1.1.nupkg.sha512",
+        "cryptohelper.nuspec",
+        "lib/net451/CryptoHelper.dll",
+        "lib/net451/CryptoHelper.xml",
+        "lib/netstandard1.3/CryptoHelper.dll",
+        "lib/netstandard1.3/CryptoHelper.xml"
       ]
     },
     "IdentityModel/2.1.1": {
@@ -4363,17 +4403,30 @@
         "microsoft.aspnetcore.cors.nuspec"
       ]
     },
-    "Microsoft.AspNetCore.Cryptography.Internal/1.1.0": {
-      "sha512": "Oy0pgxQkusvQwIrwbHvGVZhwk59qRVKxcer6HsWw0jCEq2LoQ7mj7x7DovE5ub8UvffLYWx77NMF5uwPtkl8KA==",
+    "Microsoft.AspNetCore.Cryptography.Internal/1.1.1": {
+      "sha512": "LIntNnQKC0yWil/WNThv6UEXGxEbETCbyLYk6RtjET01z5t2JuA7lkIg6sXQiALTCDUW7oq2kNHEjXlQ0xnQmA==",
       "type": "package",
-      "path": "microsoft.aspnetcore.cryptography.internal/1.1.0",
+      "path": "microsoft.aspnetcore.cryptography.internal/1.1.1",
       "files": [
         "lib/net451/Microsoft.AspNetCore.Cryptography.Internal.dll",
         "lib/net451/Microsoft.AspNetCore.Cryptography.Internal.xml",
         "lib/netstandard1.3/Microsoft.AspNetCore.Cryptography.Internal.dll",
         "lib/netstandard1.3/Microsoft.AspNetCore.Cryptography.Internal.xml",
-        "microsoft.aspnetcore.cryptography.internal.1.1.0.nupkg.sha512",
+        "microsoft.aspnetcore.cryptography.internal.1.1.1.nupkg.sha512",
         "microsoft.aspnetcore.cryptography.internal.nuspec"
+      ]
+    },
+    "Microsoft.AspNetCore.Cryptography.KeyDerivation/1.1.1": {
+      "sha512": "u/T/v+Q8elnUBlPSyyTtc/dhFR2zUrJIA6s6AOvjD1xdfwgkVmzQKm8BsOHOlcBwXLomISQmVNTzws2bpdt7Kg==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.cryptography.keyderivation/1.1.1",
+      "files": [
+        "lib/net451/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll",
+        "lib/net451/Microsoft.AspNetCore.Cryptography.KeyDerivation.xml",
+        "lib/netstandard1.3/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll",
+        "lib/netstandard1.3/Microsoft.AspNetCore.Cryptography.KeyDerivation.xml",
+        "microsoft.aspnetcore.cryptography.keyderivation.1.1.1.nupkg.sha512",
+        "microsoft.aspnetcore.cryptography.keyderivation.nuspec"
       ]
     },
     "Microsoft.AspNetCore.DataProtection/1.1.0": {
@@ -10666,6 +10719,7 @@
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v1.0": [
       "AuthServer >= 1.0.0",
+      "CryptoHelper >= 2.1.1",
       "IdentityServer4.AccessTokenValidation >= 1.0.2",
       "Microsoft.ApplicationInsights.AspNetCore >= 1.0.0",
       "Microsoft.AspNetCore.Mvc >= 1.0.3",
@@ -10742,6 +10796,10 @@
             "target": "Package",
             "version": "1.0.4",
             "autoReferenced": true
+          },
+          "CryptoHelper": {
+            "target": "Package",
+            "version": "2.1.1"
           },
           "Microsoft.Extensions.Options.ConfigurationExtensions": {
             "target": "Package",

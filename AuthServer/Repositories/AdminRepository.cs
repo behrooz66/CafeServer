@@ -71,5 +71,15 @@ namespace AuthServer.Repositories
             var users = db.Users.Where(u => u.RestaurantId == restaurantId).ToList();
             return users;
         }
+
+        public bool UserExists(string username)
+        {
+            var c = db.Users.Where(u => u.Username == username).Count();
+            if (c > 0)
+                return true;
+            return false;
+        }
     }
+
+
 }
