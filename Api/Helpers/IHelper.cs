@@ -37,5 +37,7 @@ namespace Api.Helpers
 
         // checks if the user belongs to a restaurant
         bool OwnesUser(ClaimsPrincipal user, string userId, IAdminRepository _admin,  IAuthRepository _auth);
+
+        string GetTimeZone(ClaimsPrincipal user, IAuthRepository auth, IRestaurantRepository restaurant, ICityRepository city);
     }
 }

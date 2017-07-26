@@ -55,6 +55,9 @@ namespace AuthServer.Repositories
         {
             var user = db.Users.Where(u => u.Id == id).FirstOrDefault();
             if (user == null) throw new NullReferenceException();
+
+            var messages = db.Messages.Where(m => m.ReceiverId == user.Id || m.SenderId == user.Id).ToList();
+            db.Messages.RemoveRange(messages);
             db.Users.Remove(user);
             db.SaveChanges();
         }

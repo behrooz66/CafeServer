@@ -8,9 +8,10 @@ using AuthServer.Infrastructure;
 namespace AuthServer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170724013139_messages_added_2")]
+    partial class messages_added_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
@@ -44,8 +45,6 @@ namespace AuthServer.Migrations
                     b.Property<double>("SWLat");
 
                     b.Property<double>("SWLon");
-
-                    b.Property<string>("TimeZone");
 
                     b.HasKey("Id");
 
@@ -257,21 +256,17 @@ namespace AuthServer.Migrations
 
                     b.Property<string>("CreateTime");
 
-                    b.Property<string>("MessageId");
-
                     b.Property<bool>("Read");
 
-                    b.Property<string>("ReceiverId");
+                    b.Property<string>("ReceiverIds");
 
-                    b.Property<int?>("ReplyToId");
+                    b.Property<int>("ReplyToId");
 
                     b.Property<string>("SenderId");
 
                     b.Property<string>("Subject");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ReceiverId");
 
                     b.HasIndex("ReplyToId");
 
@@ -589,13 +584,10 @@ namespace AuthServer.Migrations
 
             modelBuilder.Entity("AuthServer.Models.Message", b =>
                 {
-                    b.HasOne("AuthServer.Models.User", "Receiver")
-                        .WithMany()
-                        .HasForeignKey("ReceiverId");
-
                     b.HasOne("AuthServer.Models.Message", "ReplyToMessage")
                         .WithMany()
-                        .HasForeignKey("ReplyToId");
+                        .HasForeignKey("ReplyToId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("AuthServer.Models.User", "Sender")
                         .WithMany()

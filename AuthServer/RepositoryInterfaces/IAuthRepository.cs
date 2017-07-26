@@ -11,9 +11,11 @@ namespace AuthServer.RepositoryInterfaces
     {
         User GetUserById(string userId);
         User GetUserByUsername(string username);
+        IEnumerable<User> GetUsersByIds(string[] ids);
         bool ValidatePassword(string username, string password);
         List<UserClaim> GetClaims(string userId);
         int[] GetDefaultLocationIds(string userId);
         string[] GetDefaultLocationNames(string userId);
+        bool GetMustChangePassword(string userId);
     }
 }

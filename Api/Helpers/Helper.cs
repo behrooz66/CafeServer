@@ -24,6 +24,14 @@ namespace Api.Helpers
             return result;
         }
 
+        public string GetTimeZone(ClaimsPrincipal user, IAuthRepository auth, IRestaurantRepository restaurant, ICityRepository city)
+        {
+            var r = this.GetUserEntity(user, auth).RestaurantId;
+            var c = restaurant.Get(r).CityId;
+            var t = city.Get(c).TimeZone;
+            return t;
+        }
+
         public User GetUserEntity(ClaimsPrincipal user, IAuthRepository repo)
         {
             var uid = user.Identities.FirstOrDefault().Claims.Where(x => x.Type == "sub").FirstOrDefault().Value;

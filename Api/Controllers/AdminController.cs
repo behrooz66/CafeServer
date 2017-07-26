@@ -133,6 +133,7 @@ namespace Api.Controllers
             if (Crypto.VerifyHashedPassword(user.Password, vm.OldPassword))
             {
                 user.Password = Crypto.HashPassword(vm.NewPassword);
+                user.MustChangePassword = false;
                 _adminRep.UpdateUser(user.Id, user);
                 return Ok();
             }

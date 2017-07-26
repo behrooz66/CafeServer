@@ -28,7 +28,8 @@ namespace Api.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            return "value";
+            var x = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+            return x.ToString();
         }
 
         // POST api/values

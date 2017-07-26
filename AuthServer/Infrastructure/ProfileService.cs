@@ -27,6 +27,7 @@ namespace AuthServer.Infrastructure
                 var user = this._rep.GetUserById(subjectId);
                 var locIds = this._rep.GetDefaultLocationIds(subjectId);
                 var locNames = this._rep.GetDefaultLocationNames(subjectId);
+                var mustUpdatePassword = _rep.GetMustChangePassword(subjectId);
                 var Claims = new List<Claim>
                 {
                     new Claim(JwtClaimTypes.Subject, user.Id.ToString()),
@@ -36,7 +37,8 @@ namespace AuthServer.Infrastructure
                     //new Claim("countryId", locIds[2].ToString()),
                     new Claim("city", locNames[0].ToString()),
                     new Claim("province", locNames[1].ToString()),
-                    new Claim("restaurantId", locIds[3].ToString())
+                    new Claim("restaurantId", locIds[3].ToString()),
+                    new Claim("mustChangePassword", mustUpdatePassword.ToString())
                 };
                 var uc = this._rep.GetClaims(subjectId);
                 foreach(var c in uc)

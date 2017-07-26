@@ -33,7 +33,7 @@ namespace AuthServer.Infrastructure
         public DbSet<ReservationHistory> ReservationHistories { get; set; }
         public DbSet<GiftCardHistory> GiftCardHistories { get; set; }
 
-
+        public DbSet<Message> Messages { get; set; }
 
     }
 }

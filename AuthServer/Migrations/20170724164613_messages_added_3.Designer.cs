@@ -8,9 +8,10 @@ using AuthServer.Infrastructure;
 namespace AuthServer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170724164613_messages_added_3")]
+    partial class messages_added_3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
@@ -44,8 +45,6 @@ namespace AuthServer.Migrations
                     b.Property<double>("SWLat");
 
                     b.Property<double>("SWLon");
-
-                    b.Property<string>("TimeZone");
 
                     b.HasKey("Id");
 
@@ -263,7 +262,7 @@ namespace AuthServer.Migrations
 
                     b.Property<string>("ReceiverId");
 
-                    b.Property<int?>("ReplyToId");
+                    b.Property<int>("ReplyToId");
 
                     b.Property<string>("SenderId");
 
@@ -595,7 +594,8 @@ namespace AuthServer.Migrations
 
                     b.HasOne("AuthServer.Models.Message", "ReplyToMessage")
                         .WithMany()
-                        .HasForeignKey("ReplyToId");
+                        .HasForeignKey("ReplyToId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("AuthServer.Models.User", "Sender")
                         .WithMany()

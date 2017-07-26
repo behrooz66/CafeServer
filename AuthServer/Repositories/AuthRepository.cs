@@ -52,7 +52,7 @@ namespace AuthServer.Repositories
 
         public User GetUserById(string userId)
         {
-            var x = db.Users.ToList();
+           // var x = db.Users.ToList();
             var user = db.Users.Where(u => u.Id == userId).FirstOrDefault();
             return user;
         }
@@ -63,12 +63,23 @@ namespace AuthServer.Repositories
             return user;
         }
 
+        public bool GetMustChangePassword(string userid)
+        {
+            return this.db.Users.Where(u => u.Id == userid).FirstOrDefault().MustChangePassword;
+        }
+
         public bool ValidatePassword(string username, string password)
         {
             var user = db.Users.Where(u => u.Username == username).FirstOrDefault();
             if (user == null) return false;
             if (Crypto.VerifyHashedPassword(user.Password, password)) return true;
             return false;
+        }
+
+        public IEnumerable<User> GetUsersByIds(string[] ids)
+        {
+            var users = db.Users.Where(u => ids.Contains(u.Id)).ToList();
+            return users;
         }
     }
 }

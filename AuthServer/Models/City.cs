@@ -24,6 +24,8 @@ namespace AuthServer.Models
         public double SELat { get; set; }
         public double SELon { get; set; }
 
+        public string TimeZone { get; set; }
+
         public int ProvinceId { get; set; }
 
         [ForeignKey("ProvinceId")]

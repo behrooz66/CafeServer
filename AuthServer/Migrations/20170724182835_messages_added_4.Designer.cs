@@ -8,9 +8,10 @@ using AuthServer.Infrastructure;
 namespace AuthServer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170724182835_messages_added_4")]
+    partial class messages_added_4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
@@ -44,8 +45,6 @@ namespace AuthServer.Migrations
                     b.Property<double>("SWLat");
 
                     b.Property<double>("SWLon");
-
-                    b.Property<string>("TimeZone");
 
                     b.HasKey("Id");
 

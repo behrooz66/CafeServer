@@ -8,9 +8,10 @@ using AuthServer.Infrastructure;
 namespace AuthServer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170724004409_messages_added.")]
+    partial class messages_added
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
@@ -44,8 +45,6 @@ namespace AuthServer.Migrations
                     b.Property<double>("SWLat");
 
                     b.Property<double>("SWLon");
-
-                    b.Property<string>("TimeZone");
 
                     b.HasKey("Id");
 
@@ -244,40 +243,6 @@ namespace AuthServer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("GiftCardTypes");
-                });
-
-            modelBuilder.Entity("AuthServer.Models.Message", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Body");
-
-                    b.Property<DateTime>("CreateDate");
-
-                    b.Property<string>("CreateTime");
-
-                    b.Property<string>("MessageId");
-
-                    b.Property<bool>("Read");
-
-                    b.Property<string>("ReceiverId");
-
-                    b.Property<int?>("ReplyToId");
-
-                    b.Property<string>("SenderId");
-
-                    b.Property<string>("Subject");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("ReplyToId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("AuthServer.Models.Order", b =>
@@ -585,21 +550,6 @@ namespace AuthServer.Migrations
                         .WithMany()
                         .HasForeignKey("GiftCardId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("AuthServer.Models.Message", b =>
-                {
-                    b.HasOne("AuthServer.Models.User", "Receiver")
-                        .WithMany()
-                        .HasForeignKey("ReceiverId");
-
-                    b.HasOne("AuthServer.Models.Message", "ReplyToMessage")
-                        .WithMany()
-                        .HasForeignKey("ReplyToId");
-
-                    b.HasOne("AuthServer.Models.User", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId");
                 });
 
             modelBuilder.Entity("AuthServer.Models.Order", b =>
