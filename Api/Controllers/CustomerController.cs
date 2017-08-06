@@ -16,14 +16,20 @@ namespace Api.Controllers
     {
         private ICustomerRepository _rep;
         private IAuthRepository _auth;
+        private IRestaurantRepository _restaurant;
+        private ICityRepository _city;
         private IHelper _helper;
         public CustomerController(ICustomerRepository rep, 
                                   IAuthRepository auth,
+                                  IRestaurantRepository restaurant,
+                                  ICityRepository city,
                                   IHelper helper)
         {
             this._auth = auth;
             this._helper = helper;
             this._rep = rep;
+            this._restaurant = restaurant;
+            this._city = city;
         }
 
         
@@ -71,7 +77,7 @@ namespace Api.Controllers
                 return BadRequest(this._helper.GetErrorsList(ModelState.ToList()));
 
             customer.RestaurantId = this._helper.GetUserEntity(User, this._auth).RestaurantId;
-            customer.UpdatedAt = DateTime.Now;
+            customer.UpdatedAt = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById(_helper.GetTimeZone(User, _auth, _restaurant, _city)));
             customer.UpdatedBy = this._helper.GetUsername(User);
             this._rep.Create(customer);
             return Ok(customer.Id);
@@ -89,7 +95,7 @@ namespace Api.Controllers
             if (this._rep.Get(id).RestaurantId != this._helper.GetUserEntity(User, this._auth).RestaurantId)
                 return Forbid(new string[] { "kir!" });
 
-            customer.UpdatedAt = DateTime.Now;
+            customer.UpdatedAt = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById(_helper.GetTimeZone(User, _auth, _restaurant, _city)));
             customer.UpdatedBy = this._helper.GetUsername(User);
             var c = this._rep.Update(id, customer);
             return Ok(c);

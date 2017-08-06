@@ -15,11 +15,15 @@ namespace Api.Controllers
     {
         private IGiftCardRepository _giftcards;
         private IAuthRepository _auth;
+        private IRestaurantRepository _restaurant;
+        private ICityRepository _city;
         private IHelper _helper;
         private ICustomerRepository _customers;
         private IGiftCardTypeRepository _giftCardTypes;
         public GiftCardController(IGiftCardRepository giftcards,
                                   IAuthRepository auth,
+                                  IRestaurantRepository restaurant,
+                                  ICityRepository city,
                                   IHelper helper,
                                   ICustomerRepository customers,
                                   IGiftCardTypeRepository giftCardTypes)
@@ -29,6 +33,8 @@ namespace Api.Controllers
             this._giftcards = giftcards;
             this._giftCardTypes = giftCardTypes;
             this._helper = helper;
+            this._restaurant = restaurant;
+            this._city = city;
         }
 
         [HttpGet]
@@ -84,7 +90,7 @@ namespace Api.Controllers
                 return BadRequest(this._helper.GetErrorsList(ModelState.ToList()));
             if (!this._helper.OwnesCustomer(User, giftcard.CustomerId, this._customers, this._auth))
                 return Forbid();
-            giftcard.UpdatedAt = DateTime.Now;
+            giftcard.UpdatedAt = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById(_helper.GetTimeZone(User, _auth, _restaurant, _city)));
             giftcard.UpdatedBy = this._helper.GetUsername(User);
             this._giftcards.Create(giftcard);
             return Ok(giftcard.Id);
@@ -104,6 +110,8 @@ namespace Api.Controllers
             if (!this._helper.OwnesGiftCard(User, id, this._giftcards, this._customers, this._auth))
                 return Forbid();
 
+            giftcard.UpdatedAt = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById(_helper.GetTimeZone(User, _auth, _restaurant, _city)));
+            giftcard.UpdatedBy = this._helper.GetUsername(User);
             GiftCard g = this._giftcards.Update(id, giftcard);
             return Ok(g);
         }

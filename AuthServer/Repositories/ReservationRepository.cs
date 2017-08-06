@@ -94,7 +94,7 @@ namespace AuthServer.Repositories
                         .ToList()
                         .Select(r =>
                         {
-                            r.Customer = null;
+                            r.Customer = db.Customers.SingleOrDefault(c => c.Id == r.CustomerId);
                             r.ReservationStatus = db.ReservationStatuses.Single(s => s.Id == r.ReservationStatusId);
                             return r;
                         });

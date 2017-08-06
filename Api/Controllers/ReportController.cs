@@ -525,6 +525,7 @@ namespace Api.Controllers
                     acceptedStatuses.Add(_reservationStatuses.Get((int)statusId));
                 }
                 var x = _reservations.GetByRestaurant(restaurantId)
+                        .Where(r => r.Date >= startDate && r.Date <= endDate)
                         .Select(r => r.Date.Date)
                         .OrderBy(r => r.Date)
                         .Distinct().ToList();
@@ -579,6 +580,7 @@ namespace Api.Controllers
                 else
                     acceptedTypes.Add(_giftCardTypes.Get((int)typeId));
                 var x = _giftcards.GetByRestaurant(restaurantId)
+                        .Where(g => g.IssueDate >= startDate && g.IssueDate <= endDate)
                         .Select(g => g.IssueDate.Date)
                         .OrderBy(g => g.Date)
                         .Distinct().ToList();

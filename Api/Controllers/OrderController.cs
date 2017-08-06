@@ -16,17 +16,23 @@ namespace Api.Controllers
         private IOrderRepository _rep;
         private IAuthRepository _auth;
         private IHelper _helper;
+        private IRestaurantRepository _restaurant;
+        private ICityRepository _city;
         private ICustomerRepository _customers;
         private IOrderTypeRepository _orderTypes;
 
         public OrderController(IOrderRepository rep, 
                                IAuthRepository auth,
                                IHelper helper,
+                               IRestaurantRepository restaurant,
+                               ICityRepository city,
                                ICustomerRepository customerRep,
                                IOrderTypeRepository orderTypes)
         {
             this._helper = helper;
             this._auth = auth;
+            this._restaurant = restaurant;
+            this._city = city;
             this._rep = rep;
             this._customers = customerRep;
             this._orderTypes = orderTypes;
@@ -87,7 +93,7 @@ namespace Api.Controllers
 
             if (!this._helper.OwnesCustomer(User, order.CustomerId, this._customers, this._auth))
                 return Forbid();
-            order.UpdatedAt = DateTime.Now;
+            order.UpdatedAt = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById(_helper.GetTimeZone(User, _auth, _restaurant, _city)));
             order.UpdatedBy = this._helper.GetUsername(User);
             this._rep.Create(order);
             return Ok(order.Id);
@@ -107,9 +113,11 @@ namespace Api.Controllers
             if (!this._helper.OwnesOrder(User, id, this._rep, this._customers, this._auth))
                 return Forbid();
 
-            order.UpdatedAt = DateTime.Now;
+            //var o = order;
+
+            order.UpdatedAt = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById(_helper.GetTimeZone(User, _auth, _restaurant, _city)));
             order.UpdatedBy = this._helper.GetUsername(User);
-            Order o = this._rep.Update(id, order);
+            var o = _rep.Update(order.Id, order);
             return Ok(o);
         }
 

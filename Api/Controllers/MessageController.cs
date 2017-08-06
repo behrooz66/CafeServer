@@ -159,6 +159,8 @@ namespace Api.Controllers
             var messageId = Guid.NewGuid().ToString();
 
             var datetime = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById(_helper.GetTimeZone(User, _auth, _restaurant, _city)));
+            var hour = datetime.Hour.ToString().Length < 2 ? "0" + datetime.Hour.ToString() : datetime.Hour.ToString();
+            var minute = datetime.Minute.ToString().Length < 2 ? "0" + datetime.Minute.ToString() : datetime.Minute.ToString();
 
             foreach (var r in m.ReceiverIds)
             {
@@ -167,7 +169,7 @@ namespace Api.Controllers
                     Body = m.Body,
                     MessageId = messageId,
                     CreateDate = datetime,
-                    CreateTime = datetime.Hour.ToString() + ":" + datetime.Minute.ToString(),
+                    CreateTime = hour + ":" + minute,
                     Read = false,
                     ReceiverId = r,
                     ReplyToId = m.ReplyToMessageId ?? null,

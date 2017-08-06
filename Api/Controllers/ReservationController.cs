@@ -16,17 +16,23 @@ namespace Api.Controllers
         private IReservationRepository _reservations;
         private IAuthRepository _auth;
         private IHelper _helper;
+        private IRestaurantRepository _restaurant;
+        private ICityRepository _city;
         private ICustomerRepository _customers;
         private IReservationStatusRepository _statuses;
         public ReservationController(IReservationRepository res,
                                      IAuthRepository auth,
                                      IHelper helper,
+                                     IRestaurantRepository restaurant,
+                                     ICityRepository city,
                                      ICustomerRepository customers,
                                      IReservationStatusRepository statuses)
         {
             this._auth = auth;
             this._customers = customers;
             this._helper = helper;
+            this._restaurant = restaurant;
+            this._city = city;
             this._reservations = res;
             this._statuses = statuses;
         }
@@ -66,12 +72,17 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        [Route("getByRestaurant")]
+        [Route("getByRestaurant/{startDate}/{endDate}")]
         [Authorize]
-        public ActionResult GetByRestaurant()
+        public ActionResult GetByRestaurant(DateTime startDate, DateTime endDate)
         {
+            startDate = startDate.Date;
+            endDate = endDate.Date;
             int restaurantId = this._helper.GetUserEntity(User, _auth).RestaurantId;
-            var reservations = this._reservations.GetByRestaurant(restaurantId);
+            var reservations = this._reservations.GetByRestaurant(restaurantId)
+                                    .Where(r => r.Date >= startDate && r.Date <= endDate)
+                                    .OrderBy(r => r.Date)
+                                    .OrderBy(r => r.Time);
             return Ok(reservations);
         }
 
@@ -84,7 +95,7 @@ namespace Api.Controllers
                 return BadRequest(this._helper.GetErrorsList(ModelState.ToList()));
             if (!this._helper.OwnesCustomer(User, reservation.CustomerId, this._customers, this._auth))
                 return Forbid();
-            reservation.UpdatedAt = DateTime.Now;
+            reservation.UpdatedAt = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById(_helper.GetTimeZone(User, _auth, _restaurant, _city)));
             reservation.UpdatedBy = this._helper.GetUsername(User);
             this._reservations.Create(reservation);
             return Ok(reservation.Id);
@@ -104,7 +115,7 @@ namespace Api.Controllers
             if (!this._helper.OwnesReservation(User, id, this._reservations, this._customers, this._auth))
                 return Forbid();
 
-            reservation.UpdatedAt = DateTime.Now;
+            reservation.UpdatedAt = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById(_helper.GetTimeZone(User, _auth, _restaurant, _city)));
             reservation.UpdatedBy = this._helper.GetUsername(User);
 
             Reservation r = this._reservations.Update(id, reservation);
